@@ -45,4 +45,3 @@ C. Kirch et al. (2017)
 \emph{Beyond Whittle: Nonparametric Correction of a Parametric Likelihood With a Focus on Bayesian Time Series Analysis}
 <arXiv:1701.04846>
 }
-

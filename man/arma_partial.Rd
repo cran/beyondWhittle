@@ -10,4 +10,3 @@ arma_partial(zt, ar, ma, nll_fun, ...)
 Deprecated, not in use.
 }
 \keyword{internal}
-

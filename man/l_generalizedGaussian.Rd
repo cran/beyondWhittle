@@ -10,4 +10,3 @@ l_generalizedGaussian(x, beta)
 Help function for Generalized Gaussian
 }
 \keyword{internal}
-

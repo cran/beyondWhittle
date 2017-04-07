@@ -10,4 +10,3 @@ pacf2AR(pacf)
 C++ function for computing AR coefficients, given PACF.
 }
 \keyword{internal}
-

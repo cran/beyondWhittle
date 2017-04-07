@@ -22,4 +22,3 @@ numeric vector of the (real-valued) spectral density values
 Compute the ARMA(p,q) spectral density evaluated at some frequencies freq in [0,pi),
 Note that no test for model stationarity is performed.
 }
-

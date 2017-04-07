@@ -1,8 +1,8 @@
 Package: beyondWhittle
 Type: Package
 Title: Bayesian Spectral Inference for Stationary Time Series
-Version: 0.17
-Date: 2017-01-19
+Version: 0.18.1
+Date: 2017-04-07
 Authors@R: c(
     person("Alexander", "Meier", email="alexander.meier@ovgu.de", role=c("aut", "cre")),
     person("Claudia", "Kirch", email="claudia.kirch@ovgu.de", role="aut"),
@@ -11,14 +11,14 @@ Authors@R: c(
 Maintainer: Alexander Meier <alexander.meier@ovgu.de>
 Description: Implementations of a Bayesian parametric (autoregressive), a Bayesian nonparametric (Whittle likelihood with Bernstein-Dirichlet prior) and a Bayesian semiparametric (autoregressive likelihood with Bernstein-Dirichlet correction) procedure are provided. The work is based on the corrected parametric likelihood by C. Kirch et al (2017) <arXiv:1701.04846>. It was supported by DFG grant KI 1443/3-1.
 License: GPL (>= 3)
-Imports: ltsa (>= 1.4.6), Rcpp (>= 0.12.7)
+Imports: ltsa (>= 1.4.6), Rcpp (>= 0.12.5)
 LinkingTo: Rcpp
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1
 NeedsCompilation: yes
-Packaged: 2017-01-23 01:48:29 UTC; alexander
+Packaged: 2017-04-07 06:08:55 UTC; alexander
 Author: Alexander Meier [aut, cre],
   Claudia Kirch [aut],
   Matthew C. Edwards [aut],
   Renate Meyer [aut]
 Repository: CRAN
-Date/Publication: 2017-01-23 08:21:26
+Date/Publication: 2017-04-07 08:01:18 UTC

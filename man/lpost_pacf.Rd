@@ -10,4 +10,3 @@ lpost_pacf(data, psi, sigma2, sigma2.alpha, sigma2.beta, psi.alpha, psi.beta)
 Log-posterior
 }
 \keyword{internal}
-

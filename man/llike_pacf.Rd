@@ -10,4 +10,3 @@ llike_pacf(data, psi, sigma2)
 Conditional Gaussian likelihood (good enough for sampling steps)
 }
 \keyword{internal}
-

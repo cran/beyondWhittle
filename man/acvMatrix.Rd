@@ -10,4 +10,3 @@ acvMatrix(acv)
 C++ function to build a Toeplitz ACV matric, given an ACV vector.
 }
 \keyword{internal}
-

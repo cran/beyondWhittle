@@ -10,4 +10,3 @@ Cn(n, g)
 Function that calculates correction matrix C_n ^ (-1/2) for ARMA model
 }
 \keyword{internal}
-

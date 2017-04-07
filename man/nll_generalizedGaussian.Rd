@@ -10,4 +10,3 @@ nll_generalizedGaussian(epsilon_t, beta)
 Help function for Generalized Gaussian
 }
 \keyword{internal}
-

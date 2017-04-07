@@ -22,4 +22,3 @@ No sigma2 in here anymore!
 ...: Further arguments to be passed to likelihood function
 }
 \keyword{internal}
-

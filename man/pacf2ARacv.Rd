@@ -10,4 +10,3 @@ pacf2ARacv(pacf, sigma2)
 C++ function for computing ACV function, given PACF and variance.
 }
 \keyword{internal}
-

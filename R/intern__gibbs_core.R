@@ -88,59 +88,66 @@ arma_conditional <- function(zt, ar, ma, nll_fun, sigma2, ...) {
 #' Log corrected parametric likelihood
 #' @keywords internal
 llike <- function(omega, FZ, ar, ma, v, w, k, tau, corrected, toggle.q, pdgrm, db.list, dist, nll_fun, ex.kurt, beta, f.alpha) {
-
+  
   # Calculates Whittle or corrected log-likelihood (assume n even) for Gaussian errors
   n <- length(FZ)
-
+  
   # Un-normalised PSD (defined on [0, 1])
   q.psd <- qpsd(omega, v, w, k, db.list)$psd
   q <- unrollPsd(q.psd, n)
-
+  
   # Normalised PSD (defined on [0, pi])
   f <- tau * q
   #f_param <- psd_arma(pi*omega, ar, ma,sigma2.ex)
-
-
+  
+  # do not consider the following frequencies in the likelihood,
+  # as they correspond to the mean (or alternating mean)
+  if (n %% 2) {
+    excludedFrequecies <- c(1,n)
+  } else {
+    excludedFrequecies <- 1
+  }
+  
   # Corrected log-likelihood
   if (corrected == TRUE) {
-
-#     if (dist=="student" && ex.kurt != 0) {
-#       df <- 6 / ex.kurt + 4
-#       sigma2 <- df / (df - 2) # sigma2 of likelihood (!=1 only possible for t data, have to correct it here)
-#     } else {
-#       sigma2 <- 1
-#     }
+    
+    #     if (dist=="student" && ex.kurt != 0) {
+    #       df <- 6 / ex.kurt + 4
+    #       sigma2 <- df / (df - 2) # sigma2 of likelihood (!=1 only possible for t data, have to correct it here)
+    #     } else {
+    #       sigma2 <- 1
+    #     }
     sigma2 <- 1
-
+    
     if (toggle.q) {
-      C <- sqrt(unrollPsd(psd_arma(pi*omega,ar,ma,1),n)^(1-f.alpha) / f)
+      C <- sqrt(unrollPsd(psd_arma(pi*omega,ar,ma,1),n)^(1-f.alpha) / f) 
     } else {
       C <- sqrt(unrollPsd(psd_arma(pi*omega,ar,ma,1),n) / f) #Cn(n, f)
     }
-
+    
     # Input for ARMA parametric likelihood - Inverse FT
     FCFZ <- fast_ift(C * FZ)
-
+    
     # Calculate ARMA parametric conditional likelihood
     if (dist == "generalized") {
       ex.kurt <- beta # QUICK HACK: Abuse ex.kurt to parse beta to nll_fun
     }
     p.arma <- arma_conditional(FCFZ, ar, ma, nll_fun, sigma2, ex.kurt)
-
-    # Corrected Gaussian log-likelihood
+    
+    # Corrected Gaussian log-likelihood 
     # llike <- sum(log(C[-c(1,n)])) - p.arma   # Note: The minus sign here.
-    llike <- sum(log(C[-c(1,n)])) - p.arma   # Note: The minus sign here.
-
+    llike <- sum(log(C[-excludedFrequecies])) - p.arma   # Note: The minus sign here.
+    
   }
-
+  
   # Whittle log-likelihood
   if (corrected == FALSE) {
-    llike <- -sum(log(f[2:(n - 1)] * 2 * pi) + pdgrm[2:(n - 1)] / (f[2:(n - 1)] * 2 * pi))  # Remove first and last here
+    llike <- -sum(log(f[-excludedFrequecies] * 2 * pi) + pdgrm[-excludedFrequecies] / (f[-excludedFrequecies] * 2 * pi))
     llike <- llike / 2
-  }
-
+  } 
+  
   return(llike)
-
+  
 }
 
 #' Log corrected posterior
@@ -151,11 +158,55 @@ lpost <- function(omega, FZ, ar, ma, v, w, k, tau,
                   dist, nll_fun, ex.kurt, kurt.lambda, beta, beta.alpha, beta.beta, f.alpha, rho, rho.alpha, rho.beta) {
 
   # Unnormalised log posterior
-  lp <- llike(omega, FZ, ar, ma, v, w, k, tau, corrected, toggle.q, pdgrm, db.list, dist, nll_fun, ex.kurt, beta, f.alpha) +
-    lprior(v, w, k, tau, M, g0.alpha, g0.beta, k.theta, tau.alpha, tau.beta, dist, ex.kurt, kurt.lambda, beta, beta.alpha, beta.beta, f.alpha, corrected, rho, rho.alpha, rho.beta)
+  ll <- llike(omega, FZ, ar, ma, v, w, k, tau, corrected, toggle.q, pdgrm, db.list, dist, nll_fun, ex.kurt, beta, f.alpha)
+  lp <- lprior(v, w, k, tau, M, g0.alpha, g0.beta, k.theta, tau.alpha, tau.beta, dist, ex.kurt, kurt.lambda, beta, beta.alpha, beta.beta, f.alpha, corrected, rho, rho.alpha, rho.beta)
 
-  return(lp)
-
+  if (is.na(ll)) {
+    ll_params <- list(omega=omega, 
+                      FZ=FZ, 
+                      ar=ar, 
+                      ma=ma, 
+                      v=v, 
+                      w=w, 
+                      k=k,
+                      tau=tau, 
+                      corrected=corrected, 
+                      toggle.q=toggle.q, 
+                      pdgrm=pdgrm, 
+                      dist=dist, 
+                      nll_fun=nll_fun, 
+                      ex.kurt=ex.kurt, 
+                      beta=beta, 
+                      f.alpha=f.alpha)
+    TXT <- paste("Likelihood evaluated as NA. Parameters: ", ll_params)
+    stop(TXT)
+  }
+  if (is.na(lp)) {
+    lp_params <- list(v=v, 
+                      w=w, 
+                      k=k, 
+                      tau=tau, 
+                      M=M, 
+                      g0.alpha=g0.alpha, 
+                      g0.beta=g0.beta, 
+                      k.theta=k.theta, 
+                      tau.alpha=tau.alpha, 
+                      tau.beta=tau.beta, 
+                      dist=dist, 
+                      ex.kurt=ex.kurt, 
+                      kurt.lambda=kurt.lambda, 
+                      beta=beta, 
+                      beta.alpha=beta.alpha, 
+                      beta.beta=beta.beta, 
+                      f.alpha=f.alpha, 
+                      corrected=corrected, 
+                      rho=rho, 
+                      rho.alpha=rho.alpha, 
+                      rho.beta=rho.beta)
+    TXT <- paste("Prior evaluated as NA. Parameters: ", lp_params)
+    stop(TXT)
+  }
+  return(ll+lp)
 }
 
 #' Log prior of Bernstein-Dirichlet mixture and parametric working model -- all unnormalized

@@ -10,4 +10,3 @@ genEpsARMAC(zt, ar, ma)
 C++ function for generating epsilon process for ARMA(p,q)
 }
 \keyword{internal}
-

@@ -10,4 +10,3 @@ densityMixture(weights, densities)
 C++ function for building a density mixture, given mixture weights and functions.
 }
 \keyword{internal}
-

@@ -12,4 +12,3 @@ lpost(omega, FZ, ar, ma, v, w, k, tau, M, g0.alpha, g0.beta, k.theta, tau.alpha,
 Log corrected posterior
 }
 \keyword{internal}
-

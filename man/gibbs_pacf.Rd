@@ -14,4 +14,3 @@ gibbs_pacf(data, Ntotal, burnin, Nadaptive = burnin,
 Gibbs sampler of AR model with PACF parametrization
 }
 \keyword{internal}
-

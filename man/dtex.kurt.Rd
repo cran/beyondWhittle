@@ -10,4 +10,3 @@ dtex.kurt(x, ex.kurt)
 Density of t-distribution in terms of excess kurtosis
 }
 \keyword{internal}
-

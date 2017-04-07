@@ -10,4 +10,3 @@ generalizedGaussian.kurtosis(beta)
 Help function for Generalized Gaussian
 }
 \keyword{internal}
-

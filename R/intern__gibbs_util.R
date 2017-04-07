@@ -37,58 +37,54 @@ fast_mean <- function(x) {
 #' Compute F_n X_n with the real-valued Fourier matrix F_n
 #' @keywords internal
 fast_ft <- compiler::cmpfun(function(x) {
-
   # Function computes FZ (i.e. fast Fourier transformed data)
   # Outputs coefficients in correct order and rescaled
-  # NOTE: x must be mean-centered
-
   n <- length(x)
   sqrt2 <- sqrt(2)
   sqrtn <- sqrt(n)
-
   # Cyclically shift so last observation becomes first
   x <- c(x[n], x[-n])  # Important since fft() uses 0:(n-1) but we use 1:n
-
   # FFT
   fourier <- fft(x)
-
   # Extract non-redundant real and imaginary coefficients in correct order and rescale
   FZ <- rep(NA, n)
-  FZ[1] <- Re(fourier[1]) #/ sqrtn  # First coefficient
-  FZ[n] <- Re(fourier[n / 2 + 1]) #/ sqrtn  # Last coefficient
-  FZ[2 * 1:(n / 2 - 1)] <- sqrt2 * Re(fourier[2:(n / 2)]) #/ sqrtn  # Real coefficients
-  FZ[2 * 1:(n / 2 - 1) + 1] <- sqrt2 * Im(fourier[2:(n / 2)]) #/ sqrtn  # Imaginary coefficients
-
+  FZ[1] <- Re(fourier[1]) # First coefficient
+  if (n %% 2) {
+    N <- (n-1)/2
+    FZ[2*(1:N)] <- sqrt2 * Re(fourier[2:(N+1)]) # Real coefficients
+    FZ[2*(1:N)+1] <- sqrt2 * Im(fourier[2:(N+1)]) # Imaginary coefficients
+  } else {
+    FZ[n] <- Re(fourier[n / 2 + 1]) # Last coefficient
+    FZ[2 * 1:(n / 2 - 1)] <- sqrt2 * Re(fourier[2:(n / 2)]) # Real coefficients
+    FZ[2 * 1:(n / 2 - 1) + 1] <- sqrt2 * Im(fourier[2:(n / 2)]) # Imaginary coefficients
+  }
   return(FZ / sqrtn)
-
 })
 
 #' Compute F_n^t X_n with the real-valued Fourier matrix F_n
 #' @keywords internal
 fast_ift <- compiler::cmpfun(function(x) {
-
   # Function computes inverse Fourier transform
   # Can be used for finding FCFZ
-
   n <- length(x)
   sqrtn <- sqrt(n)
   sqrtn2 <- sqrt(n / 2)
-
   # Construct complex vector
   CFZ <- rep(NA, n)
-  CFZ[1] <- x[1] * sqrtn #* sqrt(n)
-  CFZ[n / 2 + 1] <- x[n] * sqrtn #* sqrt(n)
-  CFZ[2:(n / 2)] <- (x[2 * (1:(n / 2 - 1))] + x[2 * (1:(n / 2 - 1)) + 1] * 1i) * sqrtn2 #* sqrt(n / 2)
-
-  # Include complex complex conjugates
-  CFZ[(n / 2 + 2):n] <- rev(Conj(CFZ[2:(n / 2)]))
-
+  CFZ[1] <- x[1] * sqrtn
+  if (n %% 2) {
+    N <- (n-1)/2
+    CFZ[2:(N+1)] <- (x[2 * (1:N)] + 1i * x[2 * (1:N)+1] ) * sqrtn2
+    CFZ[(N+2):n] <- rev(Conj(CFZ[2:(N+1)])) # Include complex complex conjugates
+  } else {
+    CFZ[n / 2 + 1] <- x[n] * sqrtn
+    CFZ[2:(n / 2)] <- (x[2 * (1:(n / 2 - 1))] + x[2 * (1:(n / 2 - 1)) + 1] * 1i) * sqrtn2
+    CFZ[(n / 2 + 2):n] <- rev(Conj(CFZ[2:(n / 2)])) # Include complex complex conjugates
+  }
   # Inverse FFT (normalised)
   FCFZ <- fft(CFZ, inverse = TRUE) / n
-
   # Cyclically shift
   FCFZ <- c(FCFZ[-1], FCFZ[1])
-
   return(Re(FCFZ))
 })
 

@@ -23,4 +23,3 @@ numeric value for the likelihood or log-likelihood
 \description{
 Full likelihood of an autoregressive time series model with i.i.d. normal innovations
 }
-

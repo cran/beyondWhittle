@@ -15,4 +15,3 @@ numeric vector of autoregressive model coefficients
 \description{
 Convert partial autocorrelation coefficients to AR coefficients.
 }
-

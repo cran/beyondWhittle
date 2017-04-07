@@ -20,4 +20,3 @@ gibbs_toggle_ar(data, Ntotal, burnin, thin = 1, M = 1, g0.alpha = 1,
 Gibbs sampler for corrected parametric likelihood + Bernstein-Dirichlet mixture
 }
 \keyword{internal}
-

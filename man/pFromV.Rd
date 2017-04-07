@@ -10,4 +10,3 @@ pFromV(v)
 C++ function for generating  p from v in Stick Breaking DP representation
 }
 \keyword{internal}
-

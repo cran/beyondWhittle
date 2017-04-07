@@ -46,7 +46,7 @@ Further details can be found in the simulation study section in the referenced p
 # Use this variable to set the autoregressive model order
 ar.order <- 2
 
-data <- sqrt(as.numeric(sunspot.year[-length(sunspot.year)]))
+data <- sqrt(as.numeric(sunspot.year))
 data <- data - mean(data)
 
 # If you run the example be aware that this may take several minutes
@@ -110,4 +110,3 @@ C. Kirch et al. (2017)
 A. Gelman et al. (2013)
 \emph{Bayesian Data Analysis, Third Edition}
 }
-

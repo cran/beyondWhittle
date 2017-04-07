@@ -10,4 +10,3 @@ filenameMCMC(n, repN, ar.ex, ma.ex, ex.kurt.true, thin)
 Help function for I/O
 }
 \keyword{internal}
-

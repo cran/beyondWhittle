@@ -10,4 +10,3 @@ nll_t(epsilon_t, ex.kurt, ...)
 negative log likelihood of iid t observations with given excess kurtosis [unit variance]
 }
 \keyword{internal}
-

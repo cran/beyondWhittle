@@ -10,4 +10,3 @@ fast_mean(x)
 Help function to compute the mean.
 }
 \keyword{internal}
-

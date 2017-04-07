@@ -32,7 +32,7 @@
 #' # Use this variable to set the autoregressive model order
 #' ar.order <- 2
 #' 
-#' data <- sqrt(as.numeric(sunspot.year[-length(sunspot.year)]))
+#' data <- sqrt(as.numeric(sunspot.year))
 #' data <- data - mean(data)
 #' 
 #' # If you run the example be aware that this may take several minutes
@@ -91,7 +91,7 @@
 #' @importFrom graphics abline lines plot title
 #' @importFrom stats ar dbeta dgamma dnorm dt fft mad median plot.ts quantile rbeta rgamma rnorm rt runif sd var
 #' @importFrom utils head
-#' @useDynLib beyondWhittle
+#' @useDynLib beyondWhittle, .registration = TRUE
 #' @export
 gibbs_AR <- function(data,
                      Ntotal,

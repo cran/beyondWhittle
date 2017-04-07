@@ -10,4 +10,3 @@ genEpsARC(zt, ar)
 C++ function for generating epsilon process for AR(p)
 }
 \keyword{internal}
-

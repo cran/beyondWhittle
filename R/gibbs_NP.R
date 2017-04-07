@@ -30,7 +30,7 @@
 #' ## Example 1: Fit the NP model to sunspot data:
 #' ##
 #' 
-#' data <- sqrt(as.numeric(sunspot.year[-length(sunspot.year)]))
+#' data <- sqrt(as.numeric(sunspot.year))
 #' data <- data - mean(data)
 #' 
 #' # If you run the example be aware that this may take several minutes
@@ -83,7 +83,7 @@
 #' cat("IAE=", mean(abs(mcmc$psd.median-psd_true)[-1]) , sep="")
 #' }
 #' @importFrom Rcpp evalCpp
-#' @useDynLib beyondWhittle
+#' @useDynLib beyondWhittle, .registration = TRUE
 #' @export
 gibbs_NP <- function(data,
                      Ntotal,

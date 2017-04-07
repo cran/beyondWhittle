@@ -56,13 +56,13 @@ Further details can be found in the simulation study section in the referenced p
 \dontrun{
 
 ##
-## Example 1: Fit an AR(p) model to sunspot data:
+## Example 1: Fit a nonparametrically corrected AR(p) model to sunspot data:
 ##
 
 # Use this variable to set the autoregressive model order
 ar.order <- 2
 
-data <- sqrt(as.numeric(sunspot.year[-length(sunspot.year)]))
+data <- sqrt(as.numeric(sunspot.year))
 data <- data - mean(data)
 
 # If you run the example be aware that this may take several minutes
@@ -85,7 +85,7 @@ legend(x="topright", legend=c("periodogram", "pointwise median",
 
 
 ##
-## Example 2: Fit an AR(p) model to high-peaked AR(1) data
+## Example 2: Fit a nonparametrically corrected AR(p) model to high-peaked AR(1) data
 ##
 
 # Use this variable to set the autoregressive model order
@@ -125,4 +125,3 @@ C. Kirch, R. Meyer et al.
 \emph{Beyond Whittle: Nonparametric Correction of a Parametric Likelihood With a Focus on Bayesian Time Series Analysis}
 <arXiv:1701.04846>
 }
-

@@ -10,4 +10,3 @@ logfuller(x, xi = 0.001)
 Help function: Fuller Logarithm
 }
 \keyword{internal}
-

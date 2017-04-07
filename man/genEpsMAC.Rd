@@ -10,4 +10,3 @@ genEpsMAC(zt, ma)
 C++ function for generating epsilon process for MA(q)
 }
 \keyword{internal}
-

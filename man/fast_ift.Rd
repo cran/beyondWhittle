@@ -10,4 +10,3 @@ fast_ift(x)
 Compute F_n^t X_n with the real-valued Fourier matrix F_n
 }
 \keyword{internal}
-

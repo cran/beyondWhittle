@@ -10,4 +10,3 @@ llike_full(data, psi, sigma2)
 Full Gaussian likelihood (includes marginals; only needed for model comparison)
 }
 \keyword{internal}
-

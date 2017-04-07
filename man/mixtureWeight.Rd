@@ -10,4 +10,3 @@ mixtureWeight(p, w, k)
 C++ function for computing mixture weights of Bernstein-Mixtures given the probabilities p, values w, and degree k.
 }
 \keyword{internal}
-

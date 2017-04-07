@@ -12,4 +12,3 @@ lprior(v, w, k, tau, M, g0.alpha, g0.beta, k.theta, tau.alpha, tau.beta, dist,
 Log prior of Bernstein-Dirichlet mixture and parametric working model -- all unnormalized
 }
 \keyword{internal}
-

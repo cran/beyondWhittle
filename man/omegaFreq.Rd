@@ -15,4 +15,3 @@ numeric vector of the rescaled Fourier frequencies
 \description{
 Fourier frequencies, rescaled on the unit interval
 }
-

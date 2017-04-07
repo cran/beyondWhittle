@@ -32,13 +32,13 @@
 #' \dontrun{
 #' 
 #' ##
-#' ## Example 1: Fit an AR(p) model to sunspot data:
+#' ## Example 1: Fit a nonparametrically corrected AR(p) model to sunspot data:
 #' ##
 #' 
 #' # Use this variable to set the autoregressive model order
 #' ar.order <- 2
 #' 
-#' data <- sqrt(as.numeric(sunspot.year[-length(sunspot.year)]))
+#' data <- sqrt(as.numeric(sunspot.year))
 #' data <- data - mean(data)
 #' 
 #' # If you run the example be aware that this may take several minutes
@@ -61,7 +61,7 @@
 #' 
 #' 
 #' ##
-#' ## Example 2: Fit an AR(p) model to high-peaked AR(1) data
+#' ## Example 2: Fit a nonparametrically corrected AR(p) model to high-peaked AR(1) data
 #' ##
 #' 
 #' # Use this variable to set the autoregressive model order
@@ -96,7 +96,7 @@
 #' cat("IAE=", mean(abs(mcmc$psd.median-psd_true)[-1]) , sep="")
 #' }
 #' @importFrom Rcpp evalCpp
-#' @useDynLib beyondWhittle
+#' @useDynLib beyondWhittle, .registration = TRUE
 #' @export
 gibbs_NPC <- function(data,
                       Ntotal,

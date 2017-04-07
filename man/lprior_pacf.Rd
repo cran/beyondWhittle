@@ -10,4 +10,3 @@ lprior_pacf(psi, sigma2, sigma2.alpha, sigma2.beta, psi.alpha, psi.beta)
 Log-Prior of PACF parametrization
 }
 \keyword{internal}
-

@@ -10,4 +10,3 @@ fast_ft(x)
 Compute F_n X_n with the real-valued Fourier matrix F_n
 }
 \keyword{internal}
-

@@ -11,4 +11,3 @@ llike(omega, FZ, ar, ma, v, w, k, tau, corrected, toggle.q, pdgrm, db.list,
 Log corrected parametric likelihood
 }
 \keyword{internal}
-

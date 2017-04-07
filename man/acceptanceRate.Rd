@@ -12,4 +12,3 @@ C++ function for computing acceptance rate based on trace
 Note: Only use for traces from continous distributions!
 }
 \keyword{internal}
-

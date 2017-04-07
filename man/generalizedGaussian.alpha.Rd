@@ -10,4 +10,3 @@ generalizedGaussian.alpha(beta)
 Help function for Generalized Gaussian
 }
 \keyword{internal}
-

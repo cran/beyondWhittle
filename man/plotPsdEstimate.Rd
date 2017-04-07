@@ -10,4 +10,3 @@ plotPsdEstimate(mcmc, lambda, psd.true)
 Help function for visualizing
 }
 \keyword{internal}
-

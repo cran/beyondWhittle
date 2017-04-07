@@ -10,4 +10,3 @@ reduceMemoryStorageMCMC(mcmc)
 Help function for I/O
 }
 \keyword{internal}
-

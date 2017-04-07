@@ -10,4 +10,3 @@ logrosenthal(x, inverse = F)
 Help function: Rosenthal Logarithm
 }
 \keyword{internal}
-

@@ -10,4 +10,3 @@ uniformmax(sample)
 Help function: Uniform maximu
 }
 \keyword{internal}
-

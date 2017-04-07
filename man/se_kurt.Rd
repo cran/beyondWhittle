@@ -10,4 +10,3 @@ se_kurt(n)
 Help function: Standard error for kurtosis
 }
 \keyword{internal}
-

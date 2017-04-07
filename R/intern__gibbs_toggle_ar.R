@@ -100,7 +100,10 @@ gibbs_toggle_ar <- function(data,
 
   # FFT data to frequency domain
   FZ <- fast_ft(data)
-  FZ[1] <- FZ[n] <- 0
+  FZ[1] <- 0
+  if (!(n %% 2)) {
+    FZ[n] <- 0  
+  }
 
   # Periodogram
   pdgrm <- abs(FZ) ^ 2  # Note the length is n here. Note the missing 1 / sqrt(2*pi).
@@ -475,10 +478,7 @@ gibbs_toggle_ar <- function(data,
 
     # Step 4: Directly sample tau from conjugate Inverse-Gamma density
     q.psd <- qpsd(omega, V[, i + 1], W[, i + 1], k[i + 1], db.list)$psd
-    q <- rep(NA, n)
-    q[1] <- q.psd[1]
-    q[n] <- q.psd[length(q.psd)]
-    q[2 * 1:(n / 2 - 1)] <- q[2 * 1:(n / 2 - 1) + 1] <- q.psd[1:(n / 2 - 1) + 1]
+    q <- unrollPsd(q.psd, n)
 
     if (corrected == FALSE) {  # For Whittle likelihood
 
@@ -497,9 +497,11 @@ gibbs_toggle_ar <- function(data,
         #B <- Cn(n, q, AR.fit, MA.fit, sigma2.fit)  # Remove first and last for B
         # The q here is actually q / f_param
         if (prior.q) {
-          B <- Cn(n, q / (unrollPsd(psd_arma(lambda,AR,MA,1),n))^(1-f.alpha[i]))
+          #B <- Cn(n, q / (unrollPsd(psd_arma(lambda,AR,MA,1),n))^(1-f.alpha[i]))
+          B <- 1 / sqrt(q / (unrollPsd(psd_arma(lambda,AR,MA,1),n))^(1-f.alpha[i]))
         } else {
-          B <- Cn(n, q / unrollPsd(psd_arma(lambda,AR,MA,1),n))
+          #B <- Cn(n, q / unrollPsd(psd_arma(lambda,AR,MA,1),n))
+          B <- 1 / sqrt(q / unrollPsd(psd_arma(lambda,AR,MA,1),n))
         }
 
         B[1] <- B[n] <- 0

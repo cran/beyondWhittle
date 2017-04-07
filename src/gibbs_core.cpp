@@ -68,11 +68,14 @@ NumericVector densityMixture(NumericVector weights, NumericMatrix densities) {
 NumericVector unrollPsd(NumericVector qPsd, unsigned n) {
   NumericVector q(n);
   q[0] = qPsd[0];
-  for (unsigned i = 1; i <= n / 2 - 1; ++i) {
-    unsigned j = 2 * i - 1;
+  const unsigned N = (n-1)/2;
+  for (unsigned i = 1; i <= N; ++i) {
+    const unsigned j = 2 * i - 1;
     q[j] = qPsd[i];
     q[j+1] = qPsd[i];
   }
-  q[n-1] = qPsd[qPsd.size() - 1];
+  if (!(n % 2)) {
+    q[n-1] = qPsd[qPsd.size() - 1];
+  }
   return(q);
 }

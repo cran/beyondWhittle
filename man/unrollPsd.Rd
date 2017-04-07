@@ -10,4 +10,3 @@ unrollPsd(qPsd, n)
 C++ help function to redundantly roll out a PSD to length n
 }
 \keyword{internal}
-

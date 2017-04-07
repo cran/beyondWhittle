@@ -10,4 +10,3 @@ nll_norm(epsilon_t, ...)
 Negative log likelihood of iid standard normal observations [unit variance]
 }
 \keyword{internal}
-

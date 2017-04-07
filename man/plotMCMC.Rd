@@ -10,4 +10,3 @@ plotMCMC(mcmc, lambda, psd.true, ex.kurt.true = ex.kurt.true)
 Help function for visualizing
 }
 \keyword{internal}
-
