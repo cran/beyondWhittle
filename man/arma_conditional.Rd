@@ -10,7 +10,7 @@ FCFZ should be FCFZ[-c(1, n)]; i.e., have removed elements 1 and n beforehand
 No sigma2 in here anymore!
 ...: Further arguments to be passed to likelihood function}
 \usage{
-arma_conditional(zt, ar, ma, nll_fun, sigma2, ...)
+arma_conditional(zt, ar, ma, nll_fun, full_lik, ...)
 }
 \description{
 Function for computing the ARMA(p, q) conditional likelihood

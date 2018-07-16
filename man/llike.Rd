@@ -4,8 +4,8 @@
 \alias{llike}
 \title{Log corrected parametric likelihood}
 \usage{
-llike(omega, FZ, ar, ma, v, w, k, tau, corrected, toggle.q, pdgrm, db.list,
-  dist, nll_fun, ex.kurt, beta, f.alpha)
+llike(omega, FZ, ar, ma, v, w, k, tau, corrected, toggle.q, pdgrm, beta_basis_k,
+  nll_fun, f.alpha, excludeBoundary, full_lik)
 }
 \description{
 Log corrected parametric likelihood

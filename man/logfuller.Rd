@@ -4,7 +4,7 @@
 \alias{logfuller}
 \title{Help function: Fuller Logarithm}
 \usage{
-logfuller(x, xi = 0.001)
+logfuller(x, xi = 1e-08)
 }
 \description{
 Help function: Fuller Logarithm

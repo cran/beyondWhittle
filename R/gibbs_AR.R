@@ -4,10 +4,18 @@
 #' @details Partial Autocorrelation Structure (PACF, uniform prior) and the residual variance sigma2 (inverse gamma prior) is used as model parametrization.
 #' The DIC is computed with two times the posterior variance of the deviance as effective number of parameters, see (7.10) in the referenced book by Gelman et al.
 #' Further details can be found in the simulation study section in the referenced paper by C. Kirch et al.
-#' @param data numeric vector
+#' @param data numeric vector; NA values are interpreted as missing values and treated as random
+#' @param ar.order order of the autoregressive model (integer >= 0)
 #' @param Ntotal total number of iterations to run the Markov chain
 #' @param burnin number of initial iterations to be discarded
-#' @param ar.order order of the autoregressive model (integer >= 0)
+#' @param thin thinning number (postprocessing)
+#' @param print_interval Number of iterations, after which a status is printed to console
+#' @param numerical_thresh Lower (numerical pointwise) bound for the spectral density
+#' @param adaption.N total number of iterations, in which the proposal variances (of rho) are adapted
+#' @param adaption.batchSize batch size of proposal adaption for the rho_i's (PACF)
+#' @param adaption.tar target acceptance rate for the rho_i's (PACF)
+#' @param full_lik logical; if TRUE, the full likelihood for all observations is used; if FALSE, the partial likelihood for the last n-p observations
+#' @param rho.alpha,rho.beta prior parameters for the rho_i's: 2*(rho-0.5)~Beta(rho.alpha,rho.beta), default is Uniform(-1,1)
 #' @param sigma2.alpha,sigma2.beta prior parameters for sigma2 (inverse gamma)
 #' @return list containing the following fields:
 #'
@@ -37,7 +45,7 @@
 #' 
 #' # If you run the example be aware that this may take several minutes
 #' print("example may take some time to run")
-#' mcmc <- gibbs_AR(data=data, Ntotal=20000, burnin=8000, ar.order=ar.order)
+#' mcmc <- gibbs_AR(data=data, Ntotal=20000, burnin=8000, thin=4, ar.order=ar.order)
 #' 
 #' # Plot spectral estimates on log-scale (excluding the zero frequency).
 #' N <- length(mcmc$psd.median)
@@ -67,7 +75,7 @@
 #' 
 #' # If you run the example be aware that this may take several minutes
 #' print("example may take some time to run")
-#' mcmc <- gibbs_AR(data=data, Ntotal=20000, burnin=8000, ar.order=1)
+#' mcmc <- gibbs_AR(data=data, Ntotal=20000, burnin=8000, thin=4, ar.order=1)
 #' 
 #' # Plot spectral estimates
 #' N <- length(mcmc$psd.median)
@@ -94,77 +102,53 @@
 #' @useDynLib beyondWhittle, .registration = TRUE
 #' @export
 gibbs_AR <- function(data,
+                     ar.order,
                      Ntotal,
                      burnin,
-                     ar.order,
+                     thin,
+                     print_interval=500,
+                     numerical_thresh=1e-7,
+                     adaption.N=burnin,
+                     adaption.batchSize=50,
+                     adaption.tar=.44,
+                     full_lik=F,
+                     rho.alpha=rep(1,ar.order),
+                     rho.beta=rep(1,ar.order),
                      sigma2.alpha=0.001,
                      sigma2.beta=0.001) {
   
   stopifnot(ar.order > 0)
   
-  # Tolerance for mean centering
-  tol <- 1e-4
+  mcmc_params <- list(Ntotal=Ntotal,
+                      burnin=burnin,
+                      thin=thin,
+                      print_interval=print_interval, # Note
+                      numerical_thresh=numerical_thresh,
+                      Nadaptive=adaption.N,
+                      adaption.batchSize=adaption.batchSize,
+                      adaption.targetAcceptanceRate=adaption.tar)
+  prior_params <- list(ar.order=ar.order,
+                    rho.alpha=rho.alpha,
+                    rho.beta=rho.beta,
+                    sigma2.alpha=sigma2.alpha,
+                    sigma2.beta=sigma2.beta)
+  model_params <- psd_dummy_model()
   
-  # Mean center - necessary for our implementation of FFT
-  if (abs(mean(data)) > tol) {
-    data <- data - mean(data)
-    warning("Data has been mean centered for your convenience")
-  }
-  
-  mcmc_ar <- gibbs_pacf(data=data,
-                        Ntotal=Ntotal,
-                        burnin=burnin,
-                        Nadaptive=burnin,
-                        adaption.batchSize=50,
-                        adaption.targetAcceptanceRate=0.44,
-                        ar.order=ar.order,
-                        sigma2.alpha=sigma2.alpha,
-                        sigma2.beta=sigma2.beta,
-                        mu.prop=rep(0,ar.order),
-                        var.prop=rep(1/length(data),ar.order),
-                        psi.alpha=rep(1,ar.order),
-                        psi.beta=rep(1,ar.order))
-  
-  ##
-  ## Construct spectral estimates and credible regions
-  ##
-  N_MCMC_IT <- Ntotal-burnin
-  n <- length(data)
-  lambda <- pi*omegaFreq(n)
-  N <- length(lambda)
-  fpsd_store <- log_fpsd_store <- array(data=NA, dim=c(N_MCMC_IT, N))
-  for (i in 1:N_MCMC_IT) {
-    if (ar.order == 1) {
-      ar_store <- mcmc_ar$psi[i]
-    }
-    if (ar.order > 1) {
-      ar_store <- pacfToAR(mcmc_ar$psi[,i])
-    }
-    sigma2_store <- mcmc_ar$sigma2[i]
-    fpsd_store[i,] <- psd_arma(lambda,ar_store,numeric(0),sigma2_store)
-    log_fpsd_store[i,] <- logfuller(fpsd_store[i,])
-  }
-  psd.median <- apply(fpsd_store, 2, median)
-  psd.mean <- apply(fpsd_store, 2, mean)
-  
-  psd.p05 <- apply(fpsd_store, 2, quantile, 0.05)
-  psd.p95 <- apply(fpsd_store, 2, quantile, 0.95)
-  
-  log.fpsd.s <- apply(log_fpsd_store, 2, median)
-  log.fpsd.mad <- apply(log_fpsd_store, 2, mad)
-  log.fpsd.help <- apply(log_fpsd_store, 2, uniformmax)
-  log.Cvalue <- quantile(log.fpsd.help, 0.9)
-  psd.u05 <- exp(log.fpsd.s - log.Cvalue * log.fpsd.mad)
-  psd.u95 <- exp(log.fpsd.s + log.Cvalue * log.fpsd.mad)
-  
+  mcmc_ar <- gibbs_AR_nuisance_intern(data=data,
+                               mcmc_params=mcmc_params,
+                               prior_params=prior_params,
+                               model_params=model_params,
+                               full_lik=full_lik)
+
   return(structure(list(rho=mcmc_ar$psi,
                         sigma2=mcmc_ar$sigma2,
                         DIC=mcmc_ar$DIC,
-                        psd.median=psd.median,
-                        psd.mean=psd.mean,
-                        psd.p05=psd.p05,
-                        psd.p95=psd.p95,
-                        psd.u05=psd.u05,
-                        psd.u95=psd.u95),
+                        psd.median=mcmc_ar$fpsd.s,
+                        psd.mean=mcmc_ar$fpsd.mean,
+                        psd.p05=mcmc_ar$fpsd.s05,
+                        psd.p95=mcmc_ar$fpsd.s95,
+                        psd.u05=mcmc_ar$log.conflower,
+                        psd.u95=mcmc_ar$log.confupper,
+                        missing_values=mcmc_ar$missingValues_trace),
                    class="gibbs_AR"))
 }

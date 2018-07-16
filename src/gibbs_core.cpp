@@ -19,6 +19,22 @@ NumericVector pFromV(NumericVector v) {
   return p;
 }
 
+//' C++ function for generating  v from p (inverse stick breaking)
+//' NOTE: p is assumed to have length L, i.e. it does NOT contain p_0 !!
+//' @keywords internal
+// [[Rcpp::export]]
+NumericVector vFromP(NumericVector p, const double eps=1e-8) {
+  unsigned L = p.size();
+  NumericVector v(L);
+  double currentProduct = 1.0;
+  for (unsigned l = 0; l < L; ++l) {
+    v[l] = std::min(std::max(p[l] / currentProduct, eps),1.0-eps); // numerical stability
+    //v[l] = p[l] / currentProduct;
+    currentProduct *= (1.0 - v[l]);
+  }
+  return v;
+}
+
 //' C++ function for computing mixture weights of Bernstein-Mixtures given the probabilities p, values w, and degree k.
 //' @keywords internal
 // [[Rcpp::export]]

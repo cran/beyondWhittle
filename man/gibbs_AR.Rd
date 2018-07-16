@@ -4,17 +4,35 @@
 \alias{gibbs_AR}
 \title{Gibbs sampler for an autoregressive model with PACF parametrization.}
 \usage{
-gibbs_AR(data, Ntotal, burnin, ar.order, sigma2.alpha = 0.001,
-  sigma2.beta = 0.001)
+gibbs_AR(data, ar.order, Ntotal, burnin, thin, print_interval = 500,
+  numerical_thresh = 1e-07, adaption.N = burnin, adaption.batchSize = 50,
+  adaption.tar = 0.44, full_lik = F, rho.alpha = rep(1, ar.order),
+  rho.beta = rep(1, ar.order), sigma2.alpha = 0.001, sigma2.beta = 0.001)
 }
 \arguments{
-\item{data}{numeric vector}
+\item{data}{numeric vector; NA values are interpreted as missing values and treated as random}
+
+\item{ar.order}{order of the autoregressive model (integer >= 0)}
 
 \item{Ntotal}{total number of iterations to run the Markov chain}
 
 \item{burnin}{number of initial iterations to be discarded}
 
-\item{ar.order}{order of the autoregressive model (integer >= 0)}
+\item{thin}{thinning number (postprocessing)}
+
+\item{print_interval}{Number of iterations, after which a status is printed to console}
+
+\item{numerical_thresh}{Lower (numerical pointwise) bound for the spectral density}
+
+\item{adaption.N}{total number of iterations, in which the proposal variances (of rho) are adapted}
+
+\item{adaption.batchSize}{batch size of proposal adaption for the rho_i's (PACF)}
+
+\item{adaption.tar}{target acceptance rate for the rho_i's (PACF)}
+
+\item{full_lik}{logical; if TRUE, the full likelihood for all observations is used; if FALSE, the partial likelihood for the last n-p observations}
+
+\item{rho.alpha, rho.beta}{prior parameters for the rho_i's: 2*(rho-0.5)~Beta(rho.alpha,rho.beta), default is Uniform(-1,1)}
 
 \item{sigma2.alpha, sigma2.beta}{prior parameters for sigma2 (inverse gamma)}
 }
@@ -51,7 +69,7 @@ data <- data - mean(data)
 
 # If you run the example be aware that this may take several minutes
 print("example may take some time to run")
-mcmc <- gibbs_AR(data=data, Ntotal=20000, burnin=8000, ar.order=ar.order)
+mcmc <- gibbs_AR(data=data, Ntotal=20000, burnin=8000, thin=4, ar.order=ar.order)
 
 # Plot spectral estimates on log-scale (excluding the zero frequency).
 N <- length(mcmc$psd.median)
@@ -81,7 +99,7 @@ psd_true <- psd_arma(pi*omegaFreq(n), ar=0.95, ma=numeric(0), sigma2=1)
 
 # If you run the example be aware that this may take several minutes
 print("example may take some time to run")
-mcmc <- gibbs_AR(data=data, Ntotal=20000, burnin=8000, ar.order=1)
+mcmc <- gibbs_AR(data=data, Ntotal=20000, burnin=8000, thin=4, ar.order=1)
 
 # Plot spectral estimates
 N <- length(mcmc$psd.median)

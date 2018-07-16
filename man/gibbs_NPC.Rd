@@ -4,12 +4,18 @@
 \alias{gibbs_NPC}
 \title{Gibbs sampler for Bayesian semiparametric inference with the corrected AR likelihood}
 \usage{
-gibbs_NPC(data, Ntotal, burnin, thin, ar.order, eta = T, M = 1,
-  g0.alpha = 1, g0.beta = 1, k.theta = 0.01, tau.alpha = 0.001,
-  tau.beta = 0.001, kmax = 500, L = max(20, length(data)^(1/3)))
+gibbs_NPC(data, ar.order, Ntotal, burnin, thin, print_interval = 200,
+  numerical_thresh = 1e-07, adaption.N = burnin, adaption.batchSize = 50,
+  adaption.tar = 0.44, full_lik = F, rho.alpha = rep(1, ar.order),
+  rho.beta = rep(1, ar.order), eta = T, M = 1, g0.alpha = 1,
+  g0.beta = 1, k.theta = 0.01, tau.alpha = 0.001, tau.beta = 0.001,
+  trunc_l = 0.1, trunc_r = 0.9, coars = F, kmax = 100 * coars + 500 *
+  (!coars), L = max(20, length(data)^(1/3)))
 }
 \arguments{
-\item{data}{numeric vector}
+\item{data}{numeric vector; NA values are interpreted as missing values and treated as random}
+
+\item{ar.order}{order of the autoregressive model (integer > 0)}
 
 \item{Ntotal}{total number of iterations to run the Markov chain}
 
@@ -17,7 +23,19 @@ gibbs_NPC(data, Ntotal, burnin, thin, ar.order, eta = T, M = 1,
 
 \item{thin}{thinning number (postprocessing)}
 
-\item{ar.order}{order of the autoregressive model (integer > 0)}
+\item{print_interval}{Number of iterations, after which a status is printed to console}
+
+\item{numerical_thresh}{Lower (numerical pointwise) bound for the spectral density}
+
+\item{adaption.N}{total number of iterations, in which the proposal variances (of rho) are adapted}
+
+\item{adaption.batchSize}{batch size of proposal adaption for the rho_i's (PACF)}
+
+\item{adaption.tar}{target acceptance rate for the rho_i's (PACF)}
+
+\item{full_lik}{logical; if TRUE, the full likelihood for all observations is used; if FALSE, the partial likelihood for the last n-p observations}
+
+\item{rho.alpha, rho.beta}{prior parameters for the rho_i's: 2*(rho-0.5)~Beta(rho.alpha,rho.beta), default is Uniform(-1,1)}
 
 \item{eta}{logical variable indicating whether the model confidence eta 
 should be included in the inference (eta=T) or fixed to 1 (eta=F)}
@@ -30,7 +48,11 @@ should be included in the inference (eta=T) or fixed to 1 (eta=F)}
 
 \item{tau.alpha, tau.beta}{prior parameters for tau (inverse gamma)}
 
-\item{kmax}{upper bound for polynomial degree of Bernstein-Dirichlet mixture}
+\item{trunc_l, trunc_r}{left and right truncation of Bernstein polynomial basis functions, 0<=trunc_l<trunc_r<=1}
+
+\item{coars}{flag indicating whether coarsened or default bernstein polynomials are used (see Appendix E.1 in Ghosal and van der Vaart 2017)}
+
+\item{kmax}{upper bound for polynomial degree of Bernstein-Dirichlet mixture (can be set to Inf, algorithm is faster with kmax<Inf due to pre-computation of basis functions, but values 500<kmax<Inf are very memory intensive)}
 
 \item{L}{truncation parameter of DP in stick breaking representation}
 }
@@ -124,4 +146,7 @@ cat("IAE=", mean(abs(mcmc$psd.median-psd_true)[-1]) , sep="")
 C. Kirch, R. Meyer et al.
 \emph{Beyond Whittle: Nonparametric Correction of a Parametric Likelihood With a Focus on Bayesian Time Series Analysis}
 <arXiv:1701.04846>
+
+S. Ghosal and A. van der Vaart (2017)
+\emph{Fundamentals of Nonparametric Bayesian Inference} <DOI:10.1017/9781139029834>
 }

@@ -4,18 +4,24 @@
 \alias{gibbs_NP}
 \title{Gibbs sampler for Bayesian nonparametric inference with Whittle likelihood}
 \usage{
-gibbs_NP(data, Ntotal, burnin, thin, M = 1, g0.alpha = 1, g0.beta = 1,
-  k.theta = 0.01, tau.alpha = 0.001, tau.beta = 0.001, kmax = 500,
+gibbs_NP(data, Ntotal, burnin, thin, print_interval = 500,
+  numerical_thresh = 1e-07, M = 1, g0.alpha = 1, g0.beta = 1,
+  k.theta = 0.01, tau.alpha = 0.001, tau.beta = 0.001, kmax = 100 *
+  coars + 500 * (!coars), trunc_l = 0.1, trunc_r = 0.9, coars = F,
   L = max(20, length(data)^(1/3)))
 }
 \arguments{
-\item{data}{numeric vector}
+\item{data}{numeric vector; NA values are interpreted as missing values and treated as random}
 
 \item{Ntotal}{total number of iterations to run the Markov chain}
 
 \item{burnin}{number of initial iterations to be discarded}
 
 \item{thin}{thinning number (postprocessing)}
+
+\item{print_interval}{Number of iterations, after which a status is printed to console}
+
+\item{numerical_thresh}{Lower (numerical pointwise) bound for the spectral density}
 
 \item{M}{DP base measure constant (> 0)}
 
@@ -25,7 +31,11 @@ gibbs_NP(data, Ntotal, burnin, thin, M = 1, g0.alpha = 1, g0.beta = 1,
 
 \item{tau.alpha, tau.beta}{prior parameters for tau (inverse gamma)}
 
-\item{kmax}{upper bound for polynomial degree of Bernstein-Dirichlet mixture}
+\item{kmax}{upper bound for polynomial degree of Bernstein-Dirichlet mixture (can be set to Inf, algorithm is faster with kmax<Inf due to pre-computation of basis functions, but values 500<kmax<Inf are very memory intensive)}
+
+\item{trunc_l, trunc_r}{left and right truncation of Bernstein polynomial basis functions, 0<=trunc_l<trunc_r<=1}
+
+\item{coars}{flag indicating whether coarsened or default bernstein polynomials are used (see Appendix E.1 in Ghosal and van der Vaart 2017)}
 
 \item{L}{truncation parameter of DP in stick breaking representation}
 }
@@ -35,7 +45,7 @@ list containing the following fields:
    \item{psd.median,psd.mean}{psd estimates: (pointwise) posterior median and mean}
    \item{psd.p05,psd.p95}{pointwise credibility interval}
    \item{psd.u05,psd.u95}{uniform credibility interval}
-   \item{k,tau,V,W}{posterior traces of nonparametric correction}
+   \item{k,tau,V,W}{posterior traces of PSD parameters}
 }
 \description{
 Obtain samples of the posterior of the Whittle likelihood in conjunction with a Bernstein-Dirichlet prior on the spectral density.
@@ -110,4 +120,7 @@ C. Kirch et al. (2017)
 
 N. Choudhuri et al. (2004)
 \emph{Bayesian Estimation of the Spectral Density of a Time Series} <DOI:10.1198/016214504000000557>
+
+S. Ghosal and A. van der Vaart (2017)
+\emph{Fundamentals of Nonparametric Bayesian Inference} <DOI:10.1017/9781139029834>
 }

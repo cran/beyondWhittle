@@ -4,18 +4,27 @@
 #' @details Partial Autocorrelation Structure (PACF, uniform prior) and the residual variance sigma2 (inverse gamma prior) is used as model parametrization.
 #' A Bernstein-Dirichlet prior for c_eta with base measure Beta(g0.alpha, g0.beta) is used.
 #' Further details can be found in the simulation study section in the referenced paper.
-#' @param data numeric vector
+#' @param data numeric vector; NA values are interpreted as missing values and treated as random
+#' @param ar.order order of the autoregressive model (integer > 0)
 #' @param Ntotal total number of iterations to run the Markov chain
 #' @param burnin number of initial iterations to be discarded
 #' @param thin thinning number (postprocessing)
-#' @param ar.order order of the autoregressive model (integer > 0)
+#' @param print_interval Number of iterations, after which a status is printed to console
+#' @param numerical_thresh Lower (numerical pointwise) bound for the spectral density
+#' @param adaption.N total number of iterations, in which the proposal variances (of rho) are adapted
+#' @param adaption.batchSize batch size of proposal adaption for the rho_i's (PACF)
+#' @param adaption.tar target acceptance rate for the rho_i's (PACF)
+#' @param full_lik logical; if TRUE, the full likelihood for all observations is used; if FALSE, the partial likelihood for the last n-p observations
+#' @param rho.alpha,rho.beta prior parameters for the rho_i's: 2*(rho-0.5)~Beta(rho.alpha,rho.beta), default is Uniform(-1,1)
 #' @param eta logical variable indicating whether the model confidence eta 
 #' should be included in the inference (eta=T) or fixed to 1 (eta=F)
 #' @param M DP base measure constant (> 0)
 #' @param g0.alpha,g0.beta parameters of Beta base measure of DP
 #' @param k.theta prior parameter for polynomial degree k (propto exp(-k.theta*k*log(k)))
 #' @param tau.alpha,tau.beta prior parameters for tau (inverse gamma)
-#' @param kmax upper bound for polynomial degree of Bernstein-Dirichlet mixture
+#' @param trunc_l,trunc_r left and right truncation of Bernstein polynomial basis functions, 0<=trunc_l<trunc_r<=1
+#' @param coars flag indicating whether coarsened or default bernstein polynomials are used (see Appendix E.1 in Ghosal and van der Vaart 2017)
+#' @param kmax upper bound for polynomial degree of Bernstein-Dirichlet mixture (can be set to Inf, algorithm is faster with kmax<Inf due to pre-computation of basis functions, but values 500<kmax<Inf are very memory intensive)
 #' @param L truncation parameter of DP in stick breaking representation
 #' @return list containing the following fields:
 #'
@@ -28,6 +37,8 @@
 #' @references C. Kirch, R. Meyer et al.
 #' \emph{Beyond Whittle: Nonparametric Correction of a Parametric Likelihood With a Focus on Bayesian Time Series Analysis}
 #' <arXiv:1701.04846>
+#' @references S. Ghosal and A. van der Vaart (2017)
+#' \emph{Fundamentals of Nonparametric Bayesian Inference} <DOI:10.1017/9781139029834>
 #' @examples 
 #' \dontrun{
 #' 
@@ -99,10 +110,18 @@
 #' @useDynLib beyondWhittle, .registration = TRUE
 #' @export
 gibbs_NPC <- function(data,
+                      ar.order,
                       Ntotal,
                       burnin,
                       thin,
-                      ar.order,
+                      print_interval=200,
+                      numerical_thresh=1e-7,
+                      adaption.N=burnin,
+                      adaption.batchSize=50,
+                      adaption.tar=.44,
+                      full_lik=F,
+                      rho.alpha=rep(1,ar.order),
+                      rho.beta=rep(1,ar.order),
                       eta=T,
                       M=1,
                       g0.alpha=1,
@@ -110,32 +129,61 @@ gibbs_NPC <- function(data,
                       k.theta=0.01,
                       tau.alpha=0.001,
                       tau.beta=0.001,
-                      kmax = 500,
+                      trunc_l=0.1,
+                      trunc_r=0.9,
+                      coars=F,
+                      kmax = 100*coars + 500*(!coars),
                       L = max(20, length(data) ^ (1 / 3))) {
-  mcmc_NPC <- gibbs_toggle_ar(data=data,
-                              Ntotal=Ntotal,
-                              burnin=burnin,
-                              thin=thin,
-                              M=M,
-                              g0.alpha=g0.alpha,
-                              g0.beta=g0.beta,
-                              k.theta=k.theta,
-                              tau.alpha=tau.alpha,
-                              tau.beta=tau.beta,
-                              kmax=kmax,
-                              L=L,
-                              corrected=T,
-                              prior.q=T,
-                              alpha.toggle=eta,
-                              toggle=T,
-                              Nadaptive=burnin,
-                              adaption.batchSize = 50,
-                              adaption.targetAcceptanceRate = 0.44,
-                              mu.prop=rep(0,ar.order),
-                              var.prop.rho=rep(1/length(data),ar.order),
-                              dist = "normal",
-                              rho.alpha=rep(1, ar.order),
-                              rho.beta=rep(1, ar.order))
+  mcmc_params <- list(Ntotal=Ntotal,
+                      burnin=burnin,
+                      thin=thin,
+                      print_interval=print_interval, 
+                      Nadaptive=adaption.N,
+                      adaption.batchSize=adaption.batchSize,
+                      adaption.targetAcceptanceRate=adaption.tar,
+                      numerical_thresh=numerical_thresh) 
+  # # Non-toggle (fixed parametric model): Not supported officially
+  # prior_params <- list(M=M,
+  #                      g0.alpha=g0.alpha,
+  #                      g0.beta=g0.beta,
+  #                      k.theta=k.theta,
+  #                      tau.alpha=tau.alpha,
+  #                      tau.beta=tau.beta,
+  #                      kmax=kmax,
+  #                      bernstein_l=0.1, # Note
+  #                      bernstein_r=0.9, # Note
+  #                      L=L,
+  #                      toggle=F, # Note
+  #                      alpha.toggle=F, # Note
+  #                      prior.q=T,
+  #                      ar.order=ar.order,
+  #                      AR.fit=AR.fit, # Needs to be specified
+  #                      MA.fit=MA.fit) # Needs to be specified
+  # Toggle
+  prior_params <- list(M=M,
+                       g0.alpha=g0.alpha,
+                       g0.beta=g0.beta,
+                       k.theta=k.theta,
+                       tau.alpha=tau.alpha,
+                       tau.beta=tau.beta,
+                       kmax=kmax,
+                       bernstein_l=trunc_l,
+                       bernstein_r=trunc_r,
+                       bernstein_coars=coars,
+                       L=L,
+                       toggle=T,
+                       alpha.toggle=eta,
+                       prior.q=T,
+                       ar.order=ar.order,
+                       rho.alpha=rho.alpha,
+                       rho.beta=rho.beta)
+  model_params <- psd_dummy_model() # dummy model within nuisance context
+  mcmc_NPC <- gibbs_nuisance(data=data, 
+                             mcmc_params=mcmc_params, 
+                             corrected=T, 
+                             prior_params=prior_params, 
+                             model_params=model_params,
+                             full_lik=full_lik)
   return(structure(list(psd.median=mcmc_NPC$fpsd.s,
                         psd.p05=mcmc_NPC$fpsd.s05,
                         psd.p95=mcmc_NPC$fpsd.s95,
@@ -147,6 +195,7 @@ gibbs_NPC <- function(data,
                         V=mcmc_NPC$V,
                         W=mcmc_NPC$W,
                         rho=mcmc_NPC$rho,
-                        eta=mcmc_NPC$f.alpha),
+                        eta=mcmc_NPC$f.alpha,
+                        missing_values=mcmc_NPC$missingValues_trace),
                    class="gibbs_NPC"))
 }

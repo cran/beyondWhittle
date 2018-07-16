@@ -4,55 +4,62 @@
 #' C++ function for generating  p from v in Stick Breaking DP representation
 #' @keywords internal
 pFromV <- function(v) {
-    .Call('beyondWhittle_pFromV', PACKAGE = 'beyondWhittle', v)
+    .Call(`_beyondWhittle_pFromV`, v)
+}
+
+#' C++ function for generating  v from p (inverse stick breaking)
+#' NOTE: p is assumed to have length L, i.e. it does NOT contain p_0 !!
+#' @keywords internal
+vFromP <- function(p, eps = 1e-8) {
+    .Call(`_beyondWhittle_vFromP`, p, eps)
 }
 
 #' C++ function for computing mixture weights of Bernstein-Mixtures given the probabilities p, values w, and degree k.
 #' @keywords internal
 mixtureWeight <- function(p, w, k) {
-    .Call('beyondWhittle_mixtureWeight', PACKAGE = 'beyondWhittle', p, w, k)
+    .Call(`_beyondWhittle_mixtureWeight`, p, w, k)
 }
 
 #' C++ function for building a density mixture, given mixture weights and functions.
 #' @keywords internal
 densityMixture <- function(weights, densities) {
-    .Call('beyondWhittle_densityMixture', PACKAGE = 'beyondWhittle', weights, densities)
+    .Call(`_beyondWhittle_densityMixture`, weights, densities)
 }
 
 #' C++ help function to redundantly roll out a PSD to length n
 #' @keywords internal
 unrollPsd <- function(qPsd, n) {
-    .Call('beyondWhittle_unrollPsd', PACKAGE = 'beyondWhittle', qPsd, n)
+    .Call(`_beyondWhittle_unrollPsd`, qPsd, n)
 }
 
 #' C++ function for generating epsilon process for MA(q)
 #' @keywords internal
 genEpsMAC <- function(zt, ma) {
-    .Call('beyondWhittle_genEpsMAC', PACKAGE = 'beyondWhittle', zt, ma)
+    .Call(`_beyondWhittle_genEpsMAC`, zt, ma)
 }
 
 #' C++ function for computing ACV function, given PACF and variance.
 #' @keywords internal
 pacf2ARacv <- function(pacf, sigma2) {
-    .Call('beyondWhittle_pacf2ARacv', PACKAGE = 'beyondWhittle', pacf, sigma2)
+    .Call(`_beyondWhittle_pacf2ARacv`, pacf, sigma2)
 }
 
 #' C++ function for computing AR coefficients, given PACF.
 #' @keywords internal
 pacf2AR <- function(pacf) {
-    .Call('beyondWhittle_pacf2AR', PACKAGE = 'beyondWhittle', pacf)
+    .Call(`_beyondWhittle_pacf2AR`, pacf)
 }
 
 #' C++ function for generating epsilon process for AR(p)
 #' @keywords internal
 genEpsARC <- function(zt, ar) {
-    .Call('beyondWhittle_genEpsARC', PACKAGE = 'beyondWhittle', zt, ar)
+    .Call(`_beyondWhittle_genEpsARC`, zt, ar)
 }
 
 #' C++ function for generating epsilon process for ARMA(p,q)
 #' @keywords internal
 genEpsARMAC <- function(zt, ar, ma) {
-    .Call('beyondWhittle_genEpsARMAC', PACKAGE = 'beyondWhittle', zt, ar, ma)
+    .Call(`_beyondWhittle_genEpsARMAC`, zt, ar, ma)
 }
 
 #' Compute the ARMA(p,q) spectral density
@@ -66,19 +73,19 @@ genEpsARMAC <- function(zt, ar, ma) {
 #' @return numeric vector of the (real-valued) spectral density values
 #' @export
 psd_arma <- function(freq, ar, ma, sigma2 = 1.0) {
-    .Call('beyondWhittle_psd_arma', PACKAGE = 'beyondWhittle', freq, ar, ma, sigma2)
+    .Call(`_beyondWhittle_psd_arma`, freq, ar, ma, sigma2)
 }
 
 #' C++ function to build a Toeplitz ACV matric, given an ACV vector.
 #' @keywords internal
 acvMatrix <- function(acv) {
-    .Call('beyondWhittle_acvMatrix', PACKAGE = 'beyondWhittle', acv)
+    .Call(`_beyondWhittle_acvMatrix`, acv)
 }
 
 #' C++ function for computing acceptance rate based on trace
 #' Note: Only use for traces from continous distributions!
 #' @keywords internal
 acceptanceRate <- function(trace) {
-    .Call('beyondWhittle_acceptanceRate', PACKAGE = 'beyondWhittle', trace)
+    .Call(`_beyondWhittle_acceptanceRate`, trace)
 }
 

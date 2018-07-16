@@ -28,10 +28,72 @@ pacfToAR <- function(pacf) {
   }
 }
 
+#' Help function to print debugging messages
+#' @keywords internal
+print_warn <- function(msg) {
+  print(msg)
+  warning(msg)
+}
+
 #' Help function to compute the mean.
 #' @keywords internal
 fast_mean <- function(x) {
   sum(x) / length(x)
+}
+
+#' Help function for polynomial basis.
+#' @keywords internal
+coarsened_bernstein <- function(omega, l) {
+  res <- matrix(NA, nrow=l, ncol=length(omega))
+  for (i in 1:l) {
+    res[i,] <- coarsened_bernstein_i(omega, l, i)
+  }
+  res
+}
+
+#' Help function for polynomial basis.
+#' @keywords internal
+coarsened_bernstein_i <- function(omega, l, i) {
+  k <- l^2
+  b_tmp <- 0 * omega
+  for (j in ((i-1)*l+1):(i*l)) {
+    b_tmp <- b_tmp + dbeta(omega, j, k+1-j)
+  }
+  b_tmp <- b_tmp / l
+  b_tmp
+}
+
+#' Help function for polynomial basis.
+#' @keywords internal
+betaBasis_k <- function(omega, k, coarsened) {
+  if (coarsened) {
+    basis <- coarsened_bernstein(omega, k)
+  } else {
+    N <- length(omega)
+    basis <- matrix(dbeta(omega,                                                 
+                          rep(1:k, each = N),
+                          rep(k:1, each = N)),
+                    ncol = N,
+                    byrow = TRUE)
+  }
+  basis
+}
+
+#' Help function for polynomial basis.
+#' @keywords internal
+dbList <- function(n, kmax, bernstein_l=0, bernstein_r=1, coarsened=F) {
+  db.list <- vector("list", kmax)
+  omega <- omegaFreq(n); NN <- length(omega)
+  omega_for_dblist <- seq(bernstein_l, bernstein_r, length.out=NN)
+  if (coarsened) {
+    cat("Using coarsened Bernstein polynomials on (", bernstein_l , ",", bernstein_r, ")\n")
+  } else {
+    cat("Using standard Bernstein polynomials on (", bernstein_l , ",", bernstein_r, ")\n")
+  }
+  for (kk in 1:kmax) {
+    db.list[[kk]] <- betaBasis_k(omega_for_dblist, kk, coarsened)
+  }
+  return(db.list)
 }
 
 #' Compute F_n X_n with the real-valued Fourier matrix F_n
@@ -103,7 +165,7 @@ uniformmax <- function(sample) {
 
 #' Help function: Fuller Logarithm
 #' @keywords internal
-logfuller<-function(x, xi = 0.001){
+logfuller<-function(x, xi = 1e-8){
   log(x + xi) - xi / (x + xi)
 }
 
@@ -229,3 +291,29 @@ reduceMemoryStorageMCMC <- function(mcmc) { # Discard memory intensive traces
 
     return(ret)
   }
+
+#' Help function for proposing new values of v's
+#' @keywords internal
+logDet_stickBreaking <- function(v) {
+  L <- length(v)
+  sum(log(1-v)*((L-1):0))
+}
+
+#' Help function for proposing new values of v's
+#' @keywords internal
+my_rdirichlet <- function(alpha) {
+  ga <- rgamma(length(alpha), alpha, rep(1,length(alpha)))
+  ga / sum(ga)
+}
+
+#' Help function for proposing new values of v's
+#' @keywords internal
+my_ddirichlet_unnormalized <- function(x, alpha, log) {
+  ld <- sum(x*(1-alpha))
+  if (log) {
+    res <- ld
+  } else {
+    res <- exp(ld)
+  }
+  res
+}

@@ -5,8 +5,8 @@
 \title{Log corrected posterior}
 \usage{
 lpost(omega, FZ, ar, ma, v, w, k, tau, M, g0.alpha, g0.beta, k.theta, tau.alpha,
-  tau.beta, corrected, toggle.q, pdgrm, db.list, dist, nll_fun, ex.kurt,
-  kurt.lambda, beta, beta.alpha, beta.beta, f.alpha, rho, rho.alpha, rho.beta)
+  tau.beta, corrected, toggle.q, pdgrm, beta_basis_k, nll_fun, f.alpha, rho,
+  rho.alpha, rho.beta, excludeBoundary, full_lik)
 }
 \description{
 Log corrected posterior

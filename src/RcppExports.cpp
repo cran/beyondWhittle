@@ -7,7 +7,7 @@ using namespace Rcpp;
 
 // pFromV
 NumericVector pFromV(NumericVector v);
-RcppExport SEXP beyondWhittle_pFromV(SEXP vSEXP) {
+RcppExport SEXP _beyondWhittle_pFromV(SEXP vSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -16,9 +16,21 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// vFromP
+NumericVector vFromP(NumericVector p, const double eps);
+RcppExport SEXP _beyondWhittle_vFromP(SEXP pSEXP, SEXP epsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type p(pSEXP);
+    Rcpp::traits::input_parameter< const double >::type eps(epsSEXP);
+    rcpp_result_gen = Rcpp::wrap(vFromP(p, eps));
+    return rcpp_result_gen;
+END_RCPP
+}
 // mixtureWeight
 NumericVector mixtureWeight(NumericVector p, NumericVector w, unsigned k);
-RcppExport SEXP beyondWhittle_mixtureWeight(SEXP pSEXP, SEXP wSEXP, SEXP kSEXP) {
+RcppExport SEXP _beyondWhittle_mixtureWeight(SEXP pSEXP, SEXP wSEXP, SEXP kSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -31,7 +43,7 @@ END_RCPP
 }
 // densityMixture
 NumericVector densityMixture(NumericVector weights, NumericMatrix densities);
-RcppExport SEXP beyondWhittle_densityMixture(SEXP weightsSEXP, SEXP densitiesSEXP) {
+RcppExport SEXP _beyondWhittle_densityMixture(SEXP weightsSEXP, SEXP densitiesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -43,7 +55,7 @@ END_RCPP
 }
 // unrollPsd
 NumericVector unrollPsd(NumericVector qPsd, unsigned n);
-RcppExport SEXP beyondWhittle_unrollPsd(SEXP qPsdSEXP, SEXP nSEXP) {
+RcppExport SEXP _beyondWhittle_unrollPsd(SEXP qPsdSEXP, SEXP nSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -55,7 +67,7 @@ END_RCPP
 }
 // genEpsMAC
 NumericVector genEpsMAC(NumericVector zt, NumericVector ma);
-RcppExport SEXP beyondWhittle_genEpsMAC(SEXP ztSEXP, SEXP maSEXP) {
+RcppExport SEXP _beyondWhittle_genEpsMAC(SEXP ztSEXP, SEXP maSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -67,7 +79,7 @@ END_RCPP
 }
 // pacf2ARacv
 double pacf2ARacv(NumericVector pacf, double sigma2);
-RcppExport SEXP beyondWhittle_pacf2ARacv(SEXP pacfSEXP, SEXP sigma2SEXP) {
+RcppExport SEXP _beyondWhittle_pacf2ARacv(SEXP pacfSEXP, SEXP sigma2SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -79,7 +91,7 @@ END_RCPP
 }
 // pacf2AR
 NumericMatrix pacf2AR(NumericVector pacf);
-RcppExport SEXP beyondWhittle_pacf2AR(SEXP pacfSEXP) {
+RcppExport SEXP _beyondWhittle_pacf2AR(SEXP pacfSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -90,7 +102,7 @@ END_RCPP
 }
 // genEpsARC
 NumericVector genEpsARC(NumericVector zt, NumericVector ar);
-RcppExport SEXP beyondWhittle_genEpsARC(SEXP ztSEXP, SEXP arSEXP) {
+RcppExport SEXP _beyondWhittle_genEpsARC(SEXP ztSEXP, SEXP arSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -102,7 +114,7 @@ END_RCPP
 }
 // genEpsARMAC
 NumericVector genEpsARMAC(NumericVector zt, NumericVector ar, NumericVector ma);
-RcppExport SEXP beyondWhittle_genEpsARMAC(SEXP ztSEXP, SEXP arSEXP, SEXP maSEXP) {
+RcppExport SEXP _beyondWhittle_genEpsARMAC(SEXP ztSEXP, SEXP arSEXP, SEXP maSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -115,7 +127,7 @@ END_RCPP
 }
 // psd_arma
 NumericVector psd_arma(NumericVector freq, NumericVector ar, NumericVector ma, double sigma2);
-RcppExport SEXP beyondWhittle_psd_arma(SEXP freqSEXP, SEXP arSEXP, SEXP maSEXP, SEXP sigma2SEXP) {
+RcppExport SEXP _beyondWhittle_psd_arma(SEXP freqSEXP, SEXP arSEXP, SEXP maSEXP, SEXP sigma2SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -129,7 +141,7 @@ END_RCPP
 }
 // acvMatrix
 NumericMatrix acvMatrix(NumericVector acv);
-RcppExport SEXP beyondWhittle_acvMatrix(SEXP acvSEXP) {
+RcppExport SEXP _beyondWhittle_acvMatrix(SEXP acvSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -140,7 +152,7 @@ END_RCPP
 }
 // acceptanceRate
 double acceptanceRate(NumericVector trace);
-RcppExport SEXP beyondWhittle_acceptanceRate(SEXP traceSEXP) {
+RcppExport SEXP _beyondWhittle_acceptanceRate(SEXP traceSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -148,4 +160,26 @@ BEGIN_RCPP
     rcpp_result_gen = Rcpp::wrap(acceptanceRate(trace));
     return rcpp_result_gen;
 END_RCPP
+}
+
+static const R_CallMethodDef CallEntries[] = {
+    {"_beyondWhittle_pFromV", (DL_FUNC) &_beyondWhittle_pFromV, 1},
+    {"_beyondWhittle_vFromP", (DL_FUNC) &_beyondWhittle_vFromP, 2},
+    {"_beyondWhittle_mixtureWeight", (DL_FUNC) &_beyondWhittle_mixtureWeight, 3},
+    {"_beyondWhittle_densityMixture", (DL_FUNC) &_beyondWhittle_densityMixture, 2},
+    {"_beyondWhittle_unrollPsd", (DL_FUNC) &_beyondWhittle_unrollPsd, 2},
+    {"_beyondWhittle_genEpsMAC", (DL_FUNC) &_beyondWhittle_genEpsMAC, 2},
+    {"_beyondWhittle_pacf2ARacv", (DL_FUNC) &_beyondWhittle_pacf2ARacv, 2},
+    {"_beyondWhittle_pacf2AR", (DL_FUNC) &_beyondWhittle_pacf2AR, 1},
+    {"_beyondWhittle_genEpsARC", (DL_FUNC) &_beyondWhittle_genEpsARC, 2},
+    {"_beyondWhittle_genEpsARMAC", (DL_FUNC) &_beyondWhittle_genEpsARMAC, 3},
+    {"_beyondWhittle_psd_arma", (DL_FUNC) &_beyondWhittle_psd_arma, 4},
+    {"_beyondWhittle_acvMatrix", (DL_FUNC) &_beyondWhittle_acvMatrix, 1},
+    {"_beyondWhittle_acceptanceRate", (DL_FUNC) &_beyondWhittle_acceptanceRate, 1},
+    {NULL, NULL, 0}
+};
+
+RcppExport void R_init_beyondWhittle(DllInfo *dll) {
+    R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
+    R_useDynamicSymbols(dll, FALSE);
 }

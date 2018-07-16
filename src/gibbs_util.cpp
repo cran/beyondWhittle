@@ -16,10 +16,10 @@ NumericVector genEpsMAC(NumericVector zt, NumericVector ma) {
       masum[tt] += ma[jj] * epsilon_t[tt + q - jj - 1];
     }
     epsilon_t[tt + q] = zt[tt] - masum[tt];
-  }
+  }          
   NumericVector::const_iterator first = epsilon_t.begin() + q;
   NumericVector::const_iterator last = epsilon_t.begin() + m + q;
-  NumericVector epsilon_s(first, last);
+  NumericVector epsilon_s(first, last);         
   return epsilon_s;
 }
 
@@ -55,7 +55,7 @@ NumericMatrix pacf2AR(NumericVector pacf) {
   }
   if (p==2) {
     arCoef(p-1,0) = pacf[0] * (1 - pacf[1]);
-  }
+  } 
   if (p > 2) {
     for (int j=p-1; j >= 1; --j) {
       arCoef(p-1,j-1) = pacf[j-1];
@@ -78,7 +78,7 @@ NumericVector genEpsARC(NumericVector zt, NumericVector ar) {
       arsum[tt] += ar[jj] * zt[tt + p - jj - 1];
     }
     epsilon_s[tt] = zt[tt + p] - arsum[tt];
-  }
+  }            
   return epsilon_s;
 }
 
@@ -99,10 +99,10 @@ NumericVector genEpsARMAC(NumericVector zt, NumericVector ar, NumericVector ma) 
       masum[tt] += ma[kk] * epsilon_t[tt + q - kk - 1];
     }
     epsilon_t[tt + q] = zt[tt + p] - arsum[tt] - masum[tt];
-  }
+  }            
   NumericVector::const_iterator first = epsilon_t.begin() + q;
   NumericVector::const_iterator last = epsilon_t.begin() + m + q - p;
-  NumericVector epsilon_s(first, last);
+  NumericVector epsilon_s(first, last);         
   return epsilon_s;
 }
 
