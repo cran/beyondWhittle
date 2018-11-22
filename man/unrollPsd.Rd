@@ -2,11 +2,11 @@
 % Please edit documentation in R/RcppExports.R
 \name{unrollPsd}
 \alias{unrollPsd}
-\title{C++ help function to redundantly roll out a PSD to length n}
+\title{Redundantly roll out a PSD from length N=floor(n/2) to length n}
 \usage{
 unrollPsd(qPsd, n)
 }
 \description{
-C++ help function to redundantly roll out a PSD to length n
+Redundantly roll out a PSD from length N=floor(n/2) to length n
 }
 \keyword{internal}

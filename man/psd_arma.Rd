@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{psd_arma}
 \alias{psd_arma}
-\title{Compute the ARMA(p,q) spectral density}
+\title{ARMA(p,q) spectral density function}
 \usage{
 psd_arma(freq, ar, ma, sigma2 = 1)
 }
@@ -19,6 +19,13 @@ psd_arma(freq, ar, ma, sigma2 = 1)
 numeric vector of the (real-valued) spectral density values
 }
 \description{
-Compute the ARMA(p,q) spectral density evaluated at some frequencies freq in [0,pi),
+Evaluate the ARMA(p,q) spectral density at some frequencies freq in [0,pi),
 Note that no test for model stationarity is performed.
+}
+\details{
+See section 4.4 in the referenced book
+}
+\references{
+P. J. Brockwell and R. Davis (1996)
+\emph{Time Series: Theory and Methods (Second Edition)}
 }

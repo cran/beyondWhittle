@@ -1,4 +1,4 @@
-#' Negative log likelihood values for scree-type plots
+#' Negative log AR likelihood values for scree-type plots
 #'
 #' (Approximate) negative maximum log-likelihood for for different autoregressive orders to produce scree-type plots.
 #' @details By default, the maximum likelihood is approximated by the Yule-Walker method, due to numerical stabililty and computational speed. Further details can be found in the simulation study section in the referenced paper.
@@ -6,9 +6,10 @@
 #' @param order.max maximum autoregressive order to consider
 #' @param method character string giving the method used to fit the model, to be forwarded to \code{stats::\link{ar}}
 #' @return a data frame containing the autoregressive orders \code{p} and the corresponding negative log likelihood values \code{nll}
-#' @references C. Kirch et al. (2017)
+#' @references C. Kirch et al. (2018)
 #' \emph{Beyond Whittle: Nonparametric Correction of a Parametric Likelihood With a Focus on Bayesian Time Series Analysis}
-#' <arXiv:1701.04846>
+#' Bayesian Analysis
+#' <doi:10.1214/18-BA1126>
 #' @examples 
 #' \dontrun{
 #' 
@@ -19,7 +20,7 @@
 #' data <- sqrt(as.numeric(sunspot.year))
 #' data <- data <- data - mean(data)
 #' 
-#' screeType <- ar_screeType(data, order.max=15)
+#' screeType <- scree_type_ar(data, order.max=15)
 #' 
 #' # Determine the autoregressive order by an interactive visual inspection of the scree-type plot
 #' plot(x=screeType$p, y=screeType$nll, type="b")
@@ -27,7 +28,7 @@
 #' print(screeType$p[p_ind])
 #' }
 #' @export
-ar_screeType <- function(data, order.max, method="yw") {
+scree_type_ar <- function(data, order.max, method="yw") {
   stopifnot(order.max > 0)
   if (abs(mean(data)) > 1e-4) {
     data <- data - mean(data)
@@ -44,7 +45,7 @@ ar_screeType <- function(data, order.max, method="yw") {
       if (length(ar_p$ar) != p) {
         stop(paste0("Something went wrong with the AR estimation for p=", p))
       }
-      nll_val[p+1] <- -ar_lik(data, ar_p$ar, mean=0, sd=sqrt(ar_p$var.pred), log=T, full=T)
+      nll_val[p+1] <- -lik_ar(data, ar_p$ar, mean=0, sd=sqrt(ar_p$var.pred), log=T, full=T)
     }
   }
   return(data.frame(p=p_vals, nll=nll_val))
@@ -59,8 +60,8 @@ ar_screeType <- function(data, order.max, method="yw") {
 #' @param log logical; if TRUE, probabilities p are given as log(p)
 #' @param full logical; if TRUE, the full likelihood for all observations is computed; if FALSE, the partial likelihood for the last n-p observations
 #' @return numeric value for the likelihood or log-likelihood
-#' @export
-ar_lik <- function(x, ar, mean=0, sd=1, log=F, full=T) {
+#' @keywords internal
+lik_ar <- function(x, ar, mean=0, sd=1, log=F, full=T) {
   stopifnot(length(x) > 0)
   stopifnot(length(mean) == 1)
   stopifnot(length(sd) == 1)

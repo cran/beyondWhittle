@@ -2,11 +2,11 @@
 % Please edit documentation in R/RcppExports.R
 \name{mixtureWeight}
 \alias{mixtureWeight}
-\title{C++ function for computing mixture weights of Bernstein-Mixtures given the probabilities p, values w, and degree k.}
+\title{Get mixture weights of Bernstein-Dirchlet-Mixtures}
 \usage{
 mixtureWeight(p, w, k)
 }
 \description{
-C++ function for computing mixture weights of Bernstein-Mixtures given the probabilities p, values w, and degree k.
+Get mixture weights of Bernstein-Dirchlet-Mixtures
 }
 \keyword{internal}

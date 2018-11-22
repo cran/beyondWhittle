@@ -2,11 +2,13 @@
 % Please edit documentation in R/RcppExports.R
 \name{acvMatrix}
 \alias{acvMatrix}
-\title{C++ function to build a Toeplitz ACV matric, given an ACV vector.}
+\title{Build an n times n Toeplitz matrix from the 
+autocovariance values gamma(0),...,gamma(n-1)}
 \usage{
 acvMatrix(acv)
 }
 \description{
-C++ function to build a Toeplitz ACV matric, given an ACV vector.
+Build an n times n Toeplitz matrix from the 
+autocovariance values gamma(0),...,gamma(n-1)
 }
 \keyword{internal}

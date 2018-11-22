@@ -2,11 +2,11 @@
 % Please edit documentation in R/RcppExports.R
 \name{genEpsARMAC}
 \alias{genEpsARMAC}
-\title{C++ function for generating epsilon process for ARMA(p,q)}
+\title{Get epsilon process (i.e. model residuals) for ARMA(p,q)}
 \usage{
 genEpsARMAC(zt, ar, ma)
 }
 \description{
-C++ function for generating epsilon process for ARMA(p,q)
+Get epsilon process (i.e. model residuals) for ARMA(p,q)
 }
 \keyword{internal}

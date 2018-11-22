@@ -2,11 +2,11 @@
 % Please edit documentation in R/RcppExports.R
 \name{pFromV}
 \alias{pFromV}
-\title{C++ function for generating  p from v in Stick Breaking DP representation}
+\title{Get  p from v in Stick Breaking DP representation}
 \usage{
 pFromV(v)
 }
 \description{
-C++ function for generating  p from v in Stick Breaking DP representation
+Get  p from v in Stick Breaking DP representation
 }
 \keyword{internal}

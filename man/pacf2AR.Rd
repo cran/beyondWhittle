@@ -2,11 +2,19 @@
 % Please edit documentation in R/RcppExports.R
 \name{pacf2AR}
 \alias{pacf2AR}
-\title{C++ function for computing AR coefficients, given PACF.}
+\title{C++ function for computing AR coefficients from PACF.
+See Section III in Barndorff-Nielsen and Schou (1973)}
 \usage{
 pacf2AR(pacf)
 }
 \description{
-C++ function for computing AR coefficients, given PACF.
+C++ function for computing AR coefficients from PACF.
+See Section III in Barndorff-Nielsen and Schou (1973)
+}
+\references{
+O. Barndorff-Nielsen and G. Schou (1973)
+\emph{On the Parametrization of Autoregressive Models by Partial Autocorrelations}
+Journal of Multivariate Analysis (3),408-419
+<doi:10.1016/0047-259X(73)90030-4>
 }
 \keyword{internal}

@@ -2,13 +2,11 @@
 % Please edit documentation in R/nuisance_models.R
 \name{psd_dummy_model}
 \alias{psd_dummy_model}
-\title{Time series model X_t=e_t, E[e_t]=0, without additional parameters
-Not public, since encapsulated in an extra function, for easier usage}
+\title{Time series model X_t=e_t, E[e_t]=0}
 \usage{
 psd_dummy_model()
 }
 \description{
-Time series model X_t=e_t, E[e_t]=0, without additional parameters
-Not public, since encapsulated in an extra function, for easier usage
+Time series model X_t=e_t, E[e_t]=0
 }
 \keyword{internal}

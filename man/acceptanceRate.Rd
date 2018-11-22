@@ -2,13 +2,13 @@
 % Please edit documentation in R/RcppExports.R
 \name{acceptanceRate}
 \alias{acceptanceRate}
-\title{C++ function for computing acceptance rate based on trace
+\title{Computing acceptance rate based on trace
 Note: Only use for traces from continous distributions!}
 \usage{
 acceptanceRate(trace)
 }
 \description{
-C++ function for computing acceptance rate based on trace
+Computing acceptance rate based on trace
 Note: Only use for traces from continous distributions!
 }
 \keyword{internal}

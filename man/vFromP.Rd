@@ -2,13 +2,13 @@
 % Please edit documentation in R/RcppExports.R
 \name{vFromP}
 \alias{vFromP}
-\title{C++ function for generating  v from p (inverse stick breaking)
-NOTE: p is assumed to have length L, i.e. it does NOT contain p_0 !!}
+\title{Get v from p (DP inverse stick breaking)
+Note: p is assumed to have length L, i.e. it does NOT contain p_0}
 \usage{
 vFromP(p, eps = 1e-08)
 }
 \description{
-C++ function for generating  v from p (inverse stick breaking)
-NOTE: p is assumed to have length L, i.e. it does NOT contain p_0 !!
+Get v from p (DP inverse stick breaking)
+Note: p is assumed to have length L, i.e. it does NOT contain p_0
 }
 \keyword{internal}

@@ -2,11 +2,11 @@
 % Please edit documentation in R/RcppExports.R
 \name{densityMixture}
 \alias{densityMixture}
-\title{C++ function for building a density mixture, given mixture weights and functions.}
+\title{Construct a density mixture from mixture weights and density functions.}
 \usage{
 densityMixture(weights, densities)
 }
 \description{
-C++ function for building a density mixture, given mixture weights and functions.
+Construct a density mixture from mixture weights and density functions.
 }
 \keyword{internal}
