@@ -5,11 +5,11 @@
 \title{Gibbs sampler for multivaiate Bayesian nonparametric inference with Whittle likelihood}
 \usage{
 gibbs_vnp(data, Ntotal, burnin, thin = 1, print_interval = 100,
-  numerical_thresh = 1e-07, adaption.N = burnin, adaption.batchSize = 50,
-  adaption.tar = 0.44, eta = ncol(data), omega = ncol(data),
-  Sigma = 10000 * diag(ncol(data)), k.theta = 0.01, kmax = 100 * coars +
-  500 * (!coars), trunc_l = 0.1, trunc_r = 0.9, coars = F, L = max(20,
-  length(data)^(1/3)))
+  numerical_thresh = 1e-07, adaption.N = burnin,
+  adaption.batchSize = 50, adaption.tar = 0.44, eta = ncol(data),
+  omega = ncol(data), Sigma = 10000 * diag(ncol(data)),
+  k.theta = 0.01, kmax = 100 * coars + 500 * (!coars), trunc_l = 0.1,
+  trunc_r = 0.9, coars = F, L = max(20, length(data)^(1/3)))
 }
 \arguments{
 \item{data}{numeric matrix; NA values are interpreted as missing values and treated as random}

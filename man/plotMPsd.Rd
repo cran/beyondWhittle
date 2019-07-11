@@ -6,10 +6,11 @@
 Used in \code{plot.gibbs_psd}}
 \usage{
 plotMPsd(f, g = NULL, lty = rep(1, 1 + length(g)), col = rep(1, 1 +
-  length(g)), type = rep("l", 1 + length(g)), pch = rep("0", 1 + length(g)),
-  lwd = rep(1, 1 + length(g)), log = F, ylim.compound = T, mar = c(4, 4,
-  4, 3), mfrow = c(dim(f)[1], dim(f)[1]), lambda_scaling = pi,
-  ylab_prefix = "f", xlab = "Frequency", excludeBoundary = T, ...)
+  length(g)), type = rep("l", 1 + length(g)), pch = rep("0", 1 +
+  length(g)), lwd = rep(1, 1 + length(g)), log = F,
+  ylim.compound = T, mar = c(4, 4, 4, 3), mfrow = c(dim(f)[1],
+  dim(f)[1]), lambda_scaling = pi, ylab_prefix = "f",
+  xlab = "Frequency", excludeBoundary = T, ...)
 }
 \description{
 Visualization of multivariate PSDs

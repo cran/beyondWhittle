@@ -4,8 +4,8 @@
 \alias{lpost_AR}
 \title{Log Posterior = Log Prior + (conditional) Log Likelihood}
 \usage{
-lpost_AR(x_noise, rho, rho.alpha, rho.beta, sigma2, sigma2.alpha, sigma2.beta,
-  full_lik)
+lpost_AR(x_noise, rho, rho.alpha, rho.beta, sigma2, sigma2.alpha,
+  sigma2.beta, full_lik)
 }
 \description{
 Log Posterior = Log Prior + (conditional) Log Likelihood

@@ -1,24 +1,24 @@
 Package: beyondWhittle
 Type: Package
 Title: Bayesian Spectral Inference for Stationary Time Series
-Version: 1.1
-Date: 2018-11-22
+Version: 1.1.1
+Date: 2019-07-11
 Authors@R: c(
-    person("Alexander", "Meier", email="alexander.meier@ovgu.de", role=c("aut", "cre")),
+    person("Alexander", "Meier", email="meier.alexander@posteo.de", role=c("aut", "cre")),
     person("Claudia", "Kirch", email="claudia.kirch@ovgu.de", role="aut"),
     person("Matthew C.", "Edwards", email="matthew.edwards@ed.ac.uk", role="aut"),
     person("Renate", "Meyer", email="renate.meyer@auckland.ac.nz", role="aut"))
-Maintainer: Alexander Meier <alexander.meier@ovgu.de>
+Maintainer: Alexander Meier <meier.alexander@posteo.de>
 Description: Implementations of Bayesian parametric, nonparametric and semiparametric procedures for univariate and multivariate time series. The package is based on the methods presented in C. Kirch et al (2018) <doi:10.1214/18-BA1126> and A. Meier (2018) <https://opendata.uni-halle.de//handle/1981185920/13470>. It was supported by DFG grant KI 1443/3-1.
 License: GPL (>= 3)
 Imports: ltsa (>= 1.4.6), Rcpp (>= 0.12.5), MASS, MTS, forecast
 LinkingTo: Rcpp, RcppArmadillo, BH
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1
 NeedsCompilation: yes
-Packaged: 2018-11-22 17:30:16 UTC; alexander
+Packaged: 2019-07-11 18:16:47 UTC; alexandermeier
 Author: Alexander Meier [aut, cre],
   Claudia Kirch [aut],
   Matthew C. Edwards [aut],
   Renate Meyer [aut]
 Repository: CRAN
-Date/Publication: 2018-11-22 18:10:03 UTC
+Date/Publication: 2019-07-11 22:00:01 UTC

@@ -27,7 +27,7 @@ The work was supported by DFG grant KI 1443/3-1.
 \author{
 Claudia Kirch, Renate Meyer, Matthew C. Edwards, Alexander Meier
 
-Maintainer: Alexander Meier <alexander.meier@ovgu.de>
+Maintainer: Alexander Meier <meier.alexander@posteo.de>
 }
 \references{
 N. Choudhuri, S. Ghosal and A. Roy (2004)

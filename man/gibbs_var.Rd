@@ -4,10 +4,10 @@
 \alias{gibbs_var}
 \title{Gibbs sampler for vector autoregressive model.}
 \usage{
-gibbs_var(data, ar.order, Ntotal, burnin, thin = 1, print_interval = 500,
-  full_lik = F, beta.mu = rep(0, ar.order * ncol(data)^2),
-  beta.Sigma = 10000 * diag(ar.order * ncol(data)^2), Sigma.S = 1e-04 *
-  diag(ncol(data)), Sigma.nu = 1e-04)
+gibbs_var(data, ar.order, Ntotal, burnin, thin = 1,
+  print_interval = 500, full_lik = F, beta.mu = rep(0, ar.order *
+  ncol(data)^2), beta.Sigma = 10000 * diag(ar.order * ncol(data)^2),
+  Sigma.S = 1e-04 * diag(ncol(data)), Sigma.nu = 1e-04)
 }
 \arguments{
 \item{data}{numeric matrix; NA values are interpreted as missing values and treated as random}
