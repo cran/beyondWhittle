@@ -44,7 +44,8 @@ gibbs_multivariate_nuisance <- function(data,
   eta <- prior_params$eta
   stopifnot(!is.null(prior_params$omega)); stopifnot(prior_params$omega > 0)
   omega_prior <- prior_params$omega
-  stopifnot(!is.null(prior_params$Sigma)); stopifnot(class(prior_params$Sigma)=="matrix");
+  stopifnot(!is.null(prior_params$Sigma)); 
+  stopifnot(is.matrix(prior_params$Sigma));
   Sigma <- prior_params$Sigma
   stopifnot(!is.null(prior_params$k.theta)); stopifnot(prior_params$k.theta > 0)
   k.theta <- prior_params$k.theta

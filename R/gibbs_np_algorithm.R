@@ -60,7 +60,8 @@ gibbs_nuisance <- function(data,
     if (toggle) {
       AR.fit <- NULL
       MA.fit <- NULL
-      stopifnot(!is.null(prior_params$rho.alpha) && !is.null(prior_params$rho.beta)); stopifnot(prior_params$rho.alpha>0 && prior_params$rho.beta>0)
+      stopifnot(all(!is.null(prior_params$rho.alpha)) && all(!is.null(prior_params$rho.beta))); 
+      stopifnot(all(prior_params$rho.alpha>0) && all(prior_params$rho.beta>0))
       stopifnot(length(prior_params$rho.alpha)==prior_params$ar.order && length(prior_params$rho.beta)==prior_params$ar.order)
       rho.alpha <- prior_params$rho.alpha
       rho.beta <- prior_params$rho.beta
@@ -107,13 +108,13 @@ gibbs_nuisance <- function(data,
   # Model paramaters
   stopifnot(!is.null(model_params$theta_dim)); stopifnot(model_params$theta_dim >= 0)
   theta_dim <- model_params$theta_dim
-  stopifnot(!is.null(model_params$get_noise)); stopifnot(class(model_params$get_noise)=="function")
+  stopifnot(!is.null(model_params$get_noise)); stopifnot(is.function(model_params$get_noise))
   get_noise <- model_params$get_noise
-  stopifnot(!is.null(model_params$initialize_theta)); stopifnot(class(model_params$initialize_theta)=="function")
+  stopifnot(!is.null(model_params$initialize_theta)); stopifnot(is.function(model_params$initialize_theta))
   initialize_theta <- model_params$initialize_theta
-  stopifnot(!is.null(model_params$lprior_theta)); stopifnot(class(model_params$lprior_theta)=="function")
+  stopifnot(!is.null(model_params$lprior_theta)); stopifnot(is.function(model_params$lprior_theta))
   lprior_theta <- model_params$lprior_theta
-  stopifnot(!is.null(model_params$propose_next_theta)); stopifnot(class(model_params$propose_next_theta)=="function")
+  stopifnot(!is.null(model_params$propose_next_theta)); stopifnot(is.function(model_params$propose_next_theta))
   propose_next_theta <- model_params$propose_next_theta
   stopifnot(!is.null(model_params$excludeBoundary))
   excludeBoundary <- model_params$excludeBoundary # (!is.null(model_params$excludeBoundary) && model_params$excludeBoundary)
@@ -236,10 +237,10 @@ gibbs_nuisance <- function(data,
         batch <- (i-adaption.batchSize):(i-1)
         adaption.delta <- min(0.1, 1/(i^(1/3))) # c.f. Rosenthal
         batch.rho <- rho[, batch]
-        if (class(batch.rho)=="numeric") { # one rho param
+        if (is.numeric(batch.rho) && !is.matrix(batch.rho)) { # one rho param
           batch.rho.acceptanceRate <- acceptanceRate(batch.rho)
         } else { # several rho params
-          stopifnot(class(batch.rho)=="matrix")
+          stopifnot(is.matrix(batch.rho))
           batch.rho.acceptanceRate <- apply(batch.rho, 1, acceptanceRate) 
         }
         lsd.prop.rho <- lsd.prop.rho + ((batch.rho.acceptanceRate > adaption.targetAcceptanceRate)*2-1) * adaption.delta

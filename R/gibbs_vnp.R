@@ -109,7 +109,7 @@ gibbs_vnp <- function(data,
   if (omega <= 0) {
     stop("omega must be a positive number")
   }
-  if (class(Sigma)!="matrix" || (!is_hpd(Sigma)) || any(dim(Sigma)!=c(d,d))) {
+  if (!(is.matrix(Sigma)) || (!is_hpd(Sigma)) || any(dim(Sigma)!=c(d,d))) {
     stop("Sigma must be a Hermitian positive definite d times d matrix")
   }
   

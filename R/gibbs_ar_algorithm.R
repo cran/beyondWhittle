@@ -25,9 +25,9 @@ gibbs_AR_nuisance_intern <- function(data, mcmc_params, prior_params, model_para
   stopifnot(!is.null(prior_params$ar.order))
   stopifnot(prior_params$ar.order >= 0)
   ar.order <- prior_params$ar.order
-  stopifnot(!is.null(prior_params$rho.alpha) && !is.null(prior_params$rho.beta))
+  stopifnot(!any(is.null(prior_params$rho.alpha)) && !any(is.null(prior_params$rho.beta)))
   if (ar.order > 0) {
-    stopifnot(prior_params$rho.alpha>0 && prior_params$rho.beta>0)    
+    stopifnot(all(prior_params$rho.alpha>0) && all(prior_params$rho.beta>0))    
   }
   stopifnot(length(prior_params$rho.alpha)==prior_params$ar.order && length(prior_params$rho.beta)==prior_params$ar.order)
   rho.alpha <- prior_params$rho.alpha
@@ -39,13 +39,13 @@ gibbs_AR_nuisance_intern <- function(data, mcmc_params, prior_params, model_para
   # Model paramaters
   stopifnot(!is.null(model_params$theta_dim)); stopifnot(model_params$theta_dim >= 0)
   theta_dim <- model_params$theta_dim
-  stopifnot(!is.null(model_params$get_noise)); stopifnot(class(model_params$get_noise)=="function")
+  stopifnot(!is.null(model_params$get_noise)); stopifnot(is.function(model_params$get_noise))
   get_noise <- model_params$get_noise
-  stopifnot(!is.null(model_params$initialize_theta)); stopifnot(class(model_params$initialize_theta)=="function")
+  stopifnot(!is.null(model_params$initialize_theta)); stopifnot(is.function(model_params$initialize_theta))
   initialize_theta <- model_params$initialize_theta
-  stopifnot(!is.null(model_params$lprior_theta)); stopifnot(class(model_params$lprior_theta)=="function")
+  stopifnot(!is.null(model_params$lprior_theta)); stopifnot(is.function(model_params$lprior_theta))
   lprior_theta <- model_params$lprior_theta
-  stopifnot(!is.null(model_params$propose_next_theta)); stopifnot(class(model_params$propose_next_theta)=="function")
+  stopifnot(!is.null(model_params$propose_next_theta)); stopifnot(is.function(model_params$propose_next_theta))
   propose_next_theta <- model_params$propose_next_theta
   # Note: model_params$excludeBoundary not really needed -- the AR approach
   # does not use the frequency domain representation of the data
@@ -112,7 +112,7 @@ gibbs_AR_nuisance_intern <- function(data, mcmc_params, prior_params, model_para
       batch <- (j-adaption.batchSize):(j-1)
       adaption.delta <- min(0.1, 1/(j^(1/3))) # c.f. Rosenthal
       batch.rho <- rho_trace[, batch, drop=F]
-      stopifnot(class(batch.rho)=="matrix")
+      stopifnot(is.matrix(batch.rho))
       batch.rho.acceptanceRate <- apply(batch.rho, 1, acceptanceRate) 
       lsd.prop.rho <- lsd.prop.rho + ((batch.rho.acceptanceRate > adaption.targetAcceptanceRate)*2-1) * adaption.delta
       var.prop.rho <- exp(2*lsd.prop.rho)

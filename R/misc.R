@@ -145,13 +145,13 @@ Adj <- function(m) {
 #' Check if a matrix is Hermitian positive definite
 #' @keywords internal
 is_hpd <- function(A, tol=1e-15) {
-  (A==Adj(A)) && (!hasEigenValueSmallerZero(A, tol))
+  all(A==Adj(A)) && (!hasEigenValueSmallerZero(A, tol))
 }
 
 #' Check if a matrix is symmetric positive definite
 #' @keywords internal
 is_spd <- function(A, tol=1e-5) {
-  (A==t(A)) && (!hasEigenValueSmallerZero(A, tol))
+  all(A==t(A)) && (!hasEigenValueSmallerZero(A, tol))
 }
 
 #' Get string representation for missing values position from vector index

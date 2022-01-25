@@ -28,12 +28,12 @@ gibbs_VAR_nuisance_intern <- function(data,
   stopifnot(length(prior_params$beta_prior)==K*K*p)
   beta_prior <- prior_params$beta_prior
   stopifnot(!is.null(prior_params$V_prior))
-  stopifnot(class(prior_params$V_prior)=="matrix")
+  stopifnot(is.matrix(prior_params$V_prior))
   stopifnot(ncol(prior_params$V_prior)==K*K*p && nrow(prior_params$V_prior)==K*K*p)
   if (p>0) stopifnot(is_spd(prior_params$V_prior))
   V_prior <- prior_params$V_prior
   stopifnot(!is.null(prior_params$S_prior))
-  stopifnot(class(prior_params$S_prior)=="matrix")
+  stopifnot(is.matrix(prior_params$S_prior))
   stopifnot(ncol(prior_params$S_prior)==K && nrow(prior_params$S_prior)==K)
   stopifnot(is_spd(prior_params$S_prior))
   S_prior <- prior_params$S_prior
@@ -44,15 +44,15 @@ gibbs_VAR_nuisance_intern <- function(data,
   # Model paramaters
   stopifnot(!is.null(model_params$theta_dim)); stopifnot(model_params$theta_dim >= 0)
   theta_dim <- model_params$theta_dim
-  stopifnot(!is.null(model_params$get_noise)); stopifnot(class(model_params$get_noise)=="function")
+  stopifnot(!is.null(model_params$get_noise)); stopifnot(is.function(model_params$get_noise))
   get_noise <- model_params$get_noise
-  stopifnot(!is.null(model_params$get_data)); stopifnot(class(model_params$get_data)=="function")
+  stopifnot(!is.null(model_params$get_data)); stopifnot(is.function(model_params$get_data))
   get_data <- model_params$get_data
-  stopifnot(!is.null(model_params$initialize_theta)); stopifnot(class(model_params$initialize_theta)=="function")
+  stopifnot(!is.null(model_params$initialize_theta)); stopifnot(is.function(model_params$initialize_theta))
   initialize_theta <- model_params$initialize_theta
-  stopifnot(!is.null(model_params$lprior_theta)); stopifnot(class(model_params$lprior_theta)=="function")
+  stopifnot(!is.null(model_params$lprior_theta)); stopifnot(is.function(model_params$lprior_theta))
   lprior_theta <- model_params$lprior_theta
-  stopifnot(!is.null(model_params$propose_next_theta)); stopifnot(class(model_params$propose_next_theta)=="function")
+  stopifnot(!is.null(model_params$propose_next_theta)); stopifnot(is.function(model_params$propose_next_theta))
   propose_next_theta <- model_params$propose_next_theta
 
   TT <- n-p 
