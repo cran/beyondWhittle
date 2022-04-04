@@ -1,4 +1,4 @@
-5e149a8285f402dbfeebb36ec209862d *DESCRIPTION
+77f04223305a3db671e1f3246d28cd23 *DESCRIPTION
 4367c6c56410d70835e641572f7f7178 *NAMESPACE
 9d7dc024418c915c080ac1481def2477 *R/RcppExports.R
 7008ac8998902ce9e6df733dba304119 *R/arma.R
@@ -20,7 +20,7 @@ a2b1be0525d69a5ce71624a21a353273 *R/nuisance_models.R
 ce45c4c9a9671675370f8f1bf5ce2285 *R/psd_S3.R
 48a9f68746ee7909b41c161d37c160a7 *R/scree_type.R
 820ec489157d97c50228c6b29f838276 *R/unit_trace.R
-8bbc1b9a8f5f236af70851d14482b3a1 *R/varma.R
+9af842ca3ffec09e6053ccc9dda10677 *R/varma.R
 c56752d4f29aa72d695e937082eeddd3 *man/Adj.Rd
 d09d32ee94741aa75fcac2f9d0a5c7e9 *man/VARMAcov_muted.Rd
 a9c9d190a6412288641d9d8ae6481f06 *man/VAR_regressor_matrix.Rd
@@ -132,7 +132,7 @@ baaefd0f768f381ea8ab44e8a14ec3e6 *src/RcppExports.cpp
 5eb4042c51d797813c807dbe849a6f10 *src/a_gamma_process_prior.h
 ae4e5afbfdf587dd190810bb710f478d *src/arma.cpp
 bd18897eca1244a9b41a86f9b686d8b9 *src/arma.h
-6da8364b561c0076ff71bdbf7705114d *src/bernstein_gamma_psd.cpp
+a1787e63c54cd11aa529698acdf292e4 *src/bernstein_gamma_psd.cpp
 b452551dc74633b233d0f450ce4e1330 *src/bernstein_gamma_psd.h
 9145eba40194c71297692c2e10cda167 *src/beyondWhittle_types.h
 b3ec39d3a79eedea0f5c625e3fe20efe *src/gibbs_np_help.cpp

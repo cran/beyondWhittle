@@ -84,7 +84,7 @@ void bernsteinGammaPsd::update_f() {
 // Which k-segment does x in [0,1] belong to?
 int bernsteinGammaPsd::get_j(double x) const {
   const int res = std::ceil((double)k * x)-1;
-  assert (res >= 0);
+  // assert (res >= 0);
   return res;
 }
 

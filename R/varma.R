@@ -202,6 +202,67 @@ llike_var_full <- function(zt, ar, sigma) {
   return(cll + mll)
 }
 
+#' Psi-weight calculation for a VARMA model.
+#' NOTE: This is an exact copy of the MTS::PSIwgt function
+#' (only with the plot functionality removed, as not needed).
+#' This has to be done because the MTS package has been removed
+#' from CRAN in April 2022.
+#' @keywords internal
+PSIwgt <- function(Phi=NULL,Theta=NULL,lag=12,plot=TRUE,output=FALSE){
+  ### Compute the psi-weight matrices of a VARMA(p,q) model,
+  #### Phi=[phi1, phi2, ..., phip]
+  #### Theta=[theta1,theta2,...,thetaq]
+  #### Sigma= residual covariance matrix
+  q=0; p=0; k=0
+  if(length(Theta) > 0){
+    k=dim(Theta)[1]
+    k1=dim(Theta)[2]
+    q=floor(k1/k)
+  }
+  #
+  if(length(Phi) > 0){
+    k=dim(Phi)[1]
+    k1=dim(Phi)[2]
+    p=floor(k1/k)
+  }
+  #
+  if(k < 1) k=1
+  PSI=diag(k); WGT=c(PSI)
+  #
+  for (il in 1:lag){
+    ilk=il*k
+    tmp=matrix(0,k,k)
+    if((q > 0) && (il <= q))tmp=-Theta[,(ilk-k+1):ilk]
+    if(p > 0){
+      iend=min(il,p)
+      for (j in 1:iend){
+        jdx=(il-j)
+        kdx=j*k
+        tmp=tmp+Phi[,(kdx-k+1):kdx]%*%PSI[,(jdx*k+1):(jdx*k+k)]
+      }
+      ## end  of p > 0.
+    }
+    PSI=cbind(PSI,tmp)
+    WGT=cbind(WGT,c(tmp))
+    ### end of il-loop
+  }
+  ## print the output if needed
+  if(output){
+    for (i in 1:lag){
+      cat("Lag: ",i," psi-matrix","\n")
+      ist=i*k
+      print(round(PSI[,(ist+1):(ist+k)],5))
+    }
+    ## end print
+  }
+  ## plots the psi-weights
+  if(plot){
+    # Note: plotting functionality has been removed 
+    # for compatibility reasons.
+  }
+  PSIwgt <- list(psi.weight=PSI,irf=WGT)
+}
+
 #' This is a nearly exact copy of the MTS::VARMAcov function, where 
 #' the output commands at the end are removed.
 #' This has to be done because the function is called repeatedly
@@ -210,7 +271,7 @@ llike_var_full <- function(zt, ar, sigma) {
 #' @keywords internal
 VARMAcov_muted <- function (Phi = NULL, Theta = NULL, 
                             Sigma = NULL, lag = 12, trun = 120) { 
-  m1 = MTS::PSIwgt(Phi = Phi, Theta = Theta, lag = trun, plot = FALSE)
+  m1 = PSIwgt(Phi = Phi, Theta = Theta, lag = trun, plot = FALSE)
   Psi = m1$psi.weight
   nc = dim(Psi)[2]
   k = dim(Psi)[1]
