@@ -4,8 +4,7 @@
 \alias{dbList}
 \title{Construct Bernstein polynomial basises of degree up to kmax on omega}
 \usage{
-dbList(n, kmax, bernstein_l = 0, bernstein_r = 1, coarsened = F,
-  verbose = F)
+dbList(n, kmax, bernstein_l = 0, bernstein_r = 1, coarsened = F, verbose = F)
 }
 \arguments{
 \item{n}{positive integer determining the number of the (equidistant) evaluation points in [0,1]}

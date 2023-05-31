@@ -245,6 +245,22 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// qpsd_cal_cpp_expedited
+arma::rowvec qpsd_cal_cpp_expedited(arma::mat& basis1, arma::mat& basis2, arma::colvec& p, arma::uvec& pexpend, arma::uvec& selector1cpp, arma::uvec& selector2cpp);
+RcppExport SEXP _beyondWhittle_qpsd_cal_cpp_expedited(SEXP basis1SEXP, SEXP basis2SEXP, SEXP pSEXP, SEXP pexpendSEXP, SEXP selector1cppSEXP, SEXP selector2cppSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat& >::type basis1(basis1SEXP);
+    Rcpp::traits::input_parameter< arma::mat& >::type basis2(basis2SEXP);
+    Rcpp::traits::input_parameter< arma::colvec& >::type p(pSEXP);
+    Rcpp::traits::input_parameter< arma::uvec& >::type pexpend(pexpendSEXP);
+    Rcpp::traits::input_parameter< arma::uvec& >::type selector1cpp(selector1cppSEXP);
+    Rcpp::traits::input_parameter< arma::uvec& >::type selector2cpp(selector2cppSEXP);
+    rcpp_result_gen = Rcpp::wrap(qpsd_cal_cpp_expedited(basis1, basis2, p, pexpend, selector1cpp, selector2cpp));
+    return rcpp_result_gen;
+END_RCPP
+}
 // get_U_cpp
 arma::cx_cube get_U_cpp(const arma::mat& u_phi);
 RcppExport SEXP _beyondWhittle_get_U_cpp(SEXP u_phiSEXP) {
@@ -369,6 +385,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_beyondWhittle_acvMatrix", (DL_FUNC) &_beyondWhittle_acvMatrix, 1},
     {"_beyondWhittle_acvBlockMatrix", (DL_FUNC) &_beyondWhittle_acvBlockMatrix, 1},
     {"_beyondWhittle_acceptanceRate", (DL_FUNC) &_beyondWhittle_acceptanceRate, 1},
+    {"_beyondWhittle_qpsd_cal_cpp_expedited", (DL_FUNC) &_beyondWhittle_qpsd_cal_cpp_expedited, 6},
     {"_beyondWhittle_get_U_cpp", (DL_FUNC) &_beyondWhittle_get_U_cpp, 1},
     {"_beyondWhittle_unit_trace_x_from_phi", (DL_FUNC) &_beyondWhittle_unit_trace_x_from_phi, 1},
     {"_beyondWhittle_unit_trace_L_from_x", (DL_FUNC) &_beyondWhittle_unit_trace_L_from_x, 1},

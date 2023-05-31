@@ -5,8 +5,14 @@
 \title{Gibbs sampler for corrected parametric likelihood + Bernstein-Dirichlet mixture,
 including possibility of using time series as mere nuisance parameter}
 \usage{
-gibbs_nuisance(data, mcmc_params, corrected, prior_params, model_params,
-  full_lik = NULL)
+gibbs_nuisance(
+  data,
+  mcmc_params,
+  corrected,
+  prior_params,
+  model_params,
+  full_lik = NULL
+)
 }
 \description{
 Gibbs sampler for corrected parametric likelihood + Bernstein-Dirichlet mixture,

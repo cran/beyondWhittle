@@ -4,9 +4,33 @@
 \alias{lpost}
 \title{Log posterior = log prior + log corrected parametric likelihood}
 \usage{
-lpost(omega, FZ, ar, ma, v, w, k, tau, M, g0.alpha, g0.beta, k.theta,
-  tau.alpha, tau.beta, corrected, toggle.q, pdgrm, beta_basis_k, nll_fun,
-  f.alpha, rho, rho.alpha, rho.beta, excludeBoundary, full_lik)
+lpost(
+  omega,
+  FZ,
+  ar,
+  ma,
+  v,
+  w,
+  k,
+  tau,
+  M,
+  g0.alpha,
+  g0.beta,
+  k.theta,
+  tau.alpha,
+  tau.beta,
+  corrected,
+  toggle.q,
+  pdgrm,
+  beta_basis_k,
+  nll_fun,
+  f.alpha,
+  rho,
+  rho.alpha,
+  rho.beta,
+  excludeBoundary,
+  full_lik
+)
 }
 \description{
 Log posterior = log prior + log corrected parametric likelihood

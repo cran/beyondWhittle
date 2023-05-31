@@ -6,8 +6,13 @@
 including possibility of using time series as mere nuisance parameter
 Multivariate case}
 \usage{
-gibbs_multivariate_nuisance(data, mcmc_params, corrected, prior_params,
-  model_params)
+gibbs_multivariate_nuisance(
+  data,
+  mcmc_params,
+  corrected,
+  prior_params,
+  model_params
+)
 }
 \description{
 Gibbs sampler for corrected parametric likelihood + Bernstein-Dirichlet mixture,

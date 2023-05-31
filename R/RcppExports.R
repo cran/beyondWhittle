@@ -141,6 +141,10 @@ acceptanceRate <- function(trace) {
     .Call(`_beyondWhittle_acceptanceRate`, trace)
 }
 
+qpsd_cal_cpp_expedited <- function(basis1, basis2, p, pexpend, selector1cpp, selector2cpp) {
+    .Call(`_beyondWhittle_qpsd_cal_cpp_expedited`, basis1, basis2, p, pexpend, selector1cpp, selector2cpp)
+}
+
 #' Get U from phi, vectorized, cpp internal only
 #' @keywords internal
 get_U_cpp <- function(u_phi) {

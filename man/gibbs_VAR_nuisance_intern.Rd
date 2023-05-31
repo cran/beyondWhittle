@@ -4,8 +4,13 @@
 \alias{gibbs_VAR_nuisance_intern}
 \title{Gibbs sampling algorithm for VAR model}
 \usage{
-gibbs_VAR_nuisance_intern(data, mcmc_params, prior_params, model_params,
-  full_lik = F)
+gibbs_VAR_nuisance_intern(
+  data,
+  mcmc_params,
+  prior_params,
+  model_params,
+  full_lik = F
+)
 }
 \description{
 Gibbs sampling algorithm for VAR model

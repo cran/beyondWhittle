@@ -5,8 +5,13 @@
 \title{Gibbs sampler for Bayesian AR model in PACF parametrization,
 including support for TS to be a nuisance parameter}
 \usage{
-gibbs_AR_nuisance_intern(data, mcmc_params, prior_params, model_params,
-  full_lik = F)
+gibbs_AR_nuisance_intern(
+  data,
+  mcmc_params,
+  prior_params,
+  model_params,
+  full_lik = F
+)
 }
 \description{
 Gibbs sampler for Bayesian AR model in PACF parametrization,

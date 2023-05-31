@@ -4,11 +4,23 @@
 \alias{gibbs_ar}
 \title{Gibbs sampler for an autoregressive model with PACF parametrization.}
 \usage{
-gibbs_ar(data, ar.order, Ntotal, burnin, thin = 1,
-  print_interval = 500, numerical_thresh = 1e-07,
-  adaption.N = burnin, adaption.batchSize = 50, adaption.tar = 0.44,
-  full_lik = F, rho.alpha = rep(1, ar.order), rho.beta = rep(1,
-  ar.order), sigma2.alpha = 0.001, sigma2.beta = 0.001)
+gibbs_ar(
+  data,
+  ar.order,
+  Ntotal,
+  burnin,
+  thin = 1,
+  print_interval = 500,
+  numerical_thresh = 1e-07,
+  adaption.N = burnin,
+  adaption.batchSize = 50,
+  adaption.tar = 0.44,
+  full_lik = F,
+  rho.alpha = rep(1, ar.order),
+  rho.beta = rep(1, ar.order),
+  sigma2.alpha = 0.001,
+  sigma2.beta = 0.001
+)
 }
 \arguments{
 \item{data}{numeric vector; NA values are interpreted as missing values and treated as random}

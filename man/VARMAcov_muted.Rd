@@ -8,8 +8,7 @@ This has to be done because the function is called repeatedly
 within the MCMC algorithm.
 For future versions of the package, a better solution is intended.}
 \usage{
-VARMAcov_muted(Phi = NULL, Theta = NULL, Sigma = NULL, lag = 12,
-  trun = 120)
+VARMAcov_muted(Phi = NULL, Theta = NULL, Sigma = NULL, lag = 12, trun = 120)
 }
 \description{
 This is a nearly exact copy of the MTS::VARMAcov function, where 

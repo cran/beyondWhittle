@@ -4,9 +4,29 @@
 \alias{gibbs_multivariate_nuisance_cpp}
 \title{Gibbs sampler in Cpp}
 \usage{
-gibbs_multivariate_nuisance_cpp(data, NA_pos, FZ, eps_r, eps_Z, eps_U, k_0,
-  r_0, Z_0, U_phi_0, phi_def, eta, omega, Sigma, Ntotal, print_interval,
-  numerical_thresh, verbose, L, k_theta, dbList)
+gibbs_multivariate_nuisance_cpp(
+  data,
+  NA_pos,
+  FZ,
+  eps_r,
+  eps_Z,
+  eps_U,
+  k_0,
+  r_0,
+  Z_0,
+  U_phi_0,
+  phi_def,
+  eta,
+  omega,
+  Sigma,
+  Ntotal,
+  print_interval,
+  numerical_thresh,
+  verbose,
+  L,
+  k_theta,
+  dbList
+)
 }
 \description{
 Gibbs sampler in Cpp

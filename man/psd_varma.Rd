@@ -4,8 +4,12 @@
 \alias{psd_varma}
 \title{VARMA(p,q) spectral density function}
 \usage{
-psd_varma(freq, ar = matrix(nrow = nrow(Sigma), ncol = 0),
-  ma = matrix(nrow = nrow(Sigma), ncol = 0), Sigma)
+psd_varma(
+  freq,
+  ar = matrix(nrow = nrow(Sigma), ncol = 0),
+  ma = matrix(nrow = nrow(Sigma), ncol = 0),
+  Sigma
+)
 }
 \arguments{
 \item{freq}{numeric vector of frequencies to evaluate the psd, 0 <= freq < pi}

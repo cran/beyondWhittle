@@ -4,8 +4,23 @@
 \alias{lprior}
 \title{Log prior of Bernstein-Dirichlet mixture and parametric working model -- all unnormalized}
 \usage{
-lprior(v, w, k, tau, M, g0.alpha, g0.beta, k.theta, tau.alpha, tau.beta,
-  f.alpha, corrected, rho, rho.alpha, rho.beta)
+lprior(
+  v,
+  w,
+  k,
+  tau,
+  M,
+  g0.alpha,
+  g0.beta,
+  k.theta,
+  tau.alpha,
+  tau.beta,
+  f.alpha,
+  corrected,
+  rho,
+  rho.alpha,
+  rho.beta
+)
 }
 \description{
 Log prior of Bernstein-Dirichlet mixture and parametric working model -- all unnormalized

@@ -4,11 +4,25 @@
 \alias{gibbs_np}
 \title{Gibbs sampler for Bayesian nonparametric inference with Whittle likelihood}
 \usage{
-gibbs_np(data, Ntotal, burnin, thin = 1, print_interval = 100,
-  numerical_thresh = 1e-07, M = 1, g0.alpha = 1, g0.beta = 1,
-  k.theta = 0.01, tau.alpha = 0.001, tau.beta = 0.001, kmax = 100 *
-  coars + 500 * (!coars), trunc_l = 0.1, trunc_r = 0.9, coars = F,
-  L = max(20, length(data)^(1/3)))
+gibbs_np(
+  data,
+  Ntotal,
+  burnin,
+  thin = 1,
+  print_interval = 100,
+  numerical_thresh = 1e-07,
+  M = 1,
+  g0.alpha = 1,
+  g0.beta = 1,
+  k.theta = 0.01,
+  tau.alpha = 0.001,
+  tau.beta = 0.001,
+  kmax = 100 * coars + 500 * (!coars),
+  trunc_l = 0.1,
+  trunc_r = 0.9,
+  coars = F,
+  L = max(20, length(data)^(1/3))
+)
 }
 \arguments{
 \item{data}{numeric vector; NA values are interpreted as missing values and treated as random}

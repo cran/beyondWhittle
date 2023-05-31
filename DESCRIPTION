@@ -1,26 +1,29 @@
 Package: beyondWhittle
 Type: Package
-Title: Bayesian Spectral Inference for Stationary Time Series
-Version: 1.1.3
-Date: 2022-04-03
+Title: Bayesian Spectral Inference for Time Series
+Version: 1.2.0
+Date: 2023-05-20
 Authors@R: c(
-    person("Alexander", "Meier", email="meier.alexander@posteo.de", role=c("aut", "cre")),
+    person("Alexander", "Meier", email="meier.alexander@posteo.de", role="aut"),
     person("Claudia", "Kirch", email="claudia.kirch@ovgu.de", role="aut"),
     person("Matthew C.", "Edwards", email="matthew.edwards@ed.ac.uk", role="aut"),
-    person("Renate", "Meyer", email="renate.meyer@auckland.ac.nz", role="aut"))
-Maintainer: Alexander Meier <meier.alexander@posteo.de>
-Description: Implementations of Bayesian parametric, nonparametric and semiparametric procedures for univariate and multivariate time series. The package is based on the methods presented in C. Kirch et al (2018) <doi:10.1214/18-BA1126> and A. Meier (2018) <https://opendata.uni-halle.de//handle/1981185920/13470>. It was supported by DFG grant KI 1443/3-1.
+    person("Renate", "Meyer", email="renate.meyer@auckland.ac.nz", role=c("aut", "cre")),
+    person("Yifu", "Tang", email="ytan580@aucklanduni.ac.nz", role="aut"))
+Maintainer: Renate Meyer <renate.meyer@auckland.ac.nz>
+Description: Implementations of Bayesian parametric, nonparametric and semiparametric procedures for univariate and multivariate time series. The package is based on the methods presented in C. Kirch et al (2018) <doi:10.1214/18-BA1126>, A. Meier (2018) <https://opendata.uni-halle.de//handle/1981185920/13470> and Y. Tang et al (2023) <arXiv:2303.11561>. It was supported by DFG grants KI 1443/3-1 and KI 1443/3-2.
 License: GPL (>= 3)
 Imports: ltsa (>= 1.4.6), Rcpp (>= 0.12.5), MASS, forecast
 LinkingTo: Rcpp, RcppArmadillo, BH
-RoxygenNote: 6.1.1
+RoxygenNote: 7.2.2
 NeedsCompilation: yes
-Packaged: 2022-04-03 13:05:14 UTC; alexandermeier
-Author: Alexander Meier [aut, cre],
+Encoding: UTF-8
+Packaged: 2023-05-19 14:19:30 UTC; Ptole
+Author: Alexander Meier [aut],
   Claudia Kirch [aut],
   Matthew C. Edwards [aut],
-  Renate Meyer [aut]
+  Renate Meyer [aut, cre],
+  Yifu Tang [aut]
 Repository: CRAN
-Date/Publication: 2022-04-04 11:00:02 UTC
+Date/Publication: 2023-05-31 08:00:23 UTC
 Suggests: testthat (>= 3.0.0)
 Config/testthat/edition: 3
