@@ -198,7 +198,7 @@ plotMPsd <- function(f, # main psd to plot
 }
 
 #' Helping function for print and summary (both are quite similar)
-#' @param flag=T: print, flag=F: summary
+#' @param flag An indicator. flag=T indicates print, flag=F indicates summary
 #' @keywords internal
 print_summary_gibbs_psd_help <- function(mcmc, flag=T) {
   # title

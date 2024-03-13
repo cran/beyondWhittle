@@ -7,7 +7,7 @@
 print_summary_gibbs_psd_help(mcmc, flag = T)
 }
 \arguments{
-\item{flag=T:}{print, flag=F: summary}
+\item{flag}{An indicator. flag=T indicates print, flag=F indicates summary}
 }
 \description{
 Helping function for print and summary (both are quite similar)

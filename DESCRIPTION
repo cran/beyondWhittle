@@ -1,8 +1,8 @@
 Package: beyondWhittle
 Type: Package
 Title: Bayesian Spectral Inference for Time Series
-Version: 1.2.0
-Date: 2023-05-20
+Version: 1.2.1
+Date: 2024-03-12
 Authors@R: c(
     person("Alexander", "Meier", email="meier.alexander@posteo.de", role="aut"),
     person("Claudia", "Kirch", email="claudia.kirch@ovgu.de", role="aut"),
@@ -17,13 +17,13 @@ LinkingTo: Rcpp, RcppArmadillo, BH
 RoxygenNote: 7.2.2
 NeedsCompilation: yes
 Encoding: UTF-8
-Packaged: 2023-05-19 14:19:30 UTC; Ptole
+Packaged: 2024-03-12 05:11:03 UTC; Ptole
 Author: Alexander Meier [aut],
   Claudia Kirch [aut],
   Matthew C. Edwards [aut],
   Renate Meyer [aut, cre],
   Yifu Tang [aut]
 Repository: CRAN
-Date/Publication: 2023-05-31 08:00:23 UTC
+Date/Publication: 2024-03-13 19:30:02 UTC
 Suggests: testthat (>= 3.0.0)
 Config/testthat/edition: 3

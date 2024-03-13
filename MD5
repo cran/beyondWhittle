@@ -1,12 +1,12 @@
-b01df16a3b6f18b64e7182ff2f449a83 *DESCRIPTION
+6e55e83e74d8c04709c5d5ad41044c4d *DESCRIPTION
 77416b327b47f1162da6878867009522 *NAMESPACE
 74f838d0e557c4e825cb7123febe50b3 *R/RcppExports.R
 7008ac8998902ce9e6df733dba304119 *R/arma.R
 c1a426e7dad9c44a5bf865bf9d67fa67 *R/bernstein_polynomials.R
 4777e8d865d96afb2c1be6391828ec3c *R/dynamicWhittle_MCMC_zigzag.R
 cb269ed8b9be6f4aa44aa9a906c4247e *R/dynamicWhittle_S3method.R
-5f2a9ec26ba9aafcdac9b59b46fc07fa *R/dynamicWhittle_miscellanea_zigzag.R
-573e163f76a2f44412a8a6602e4c4519 *R/dynamicWhittle_prior_and_mcmc_params.R
+45fca4a6fbdde6da19523b7eec1093cb *R/dynamicWhittle_miscellanea_zigzag.R
+ca836ddfb31758f86c05270187831de6 *R/dynamicWhittle_prior_and_mcmc_params.R
 50364178f12e3417cfad0a74584ac1ad *R/fourier_transform.R
 bc0dff7d40281c446723a75964aed1ab *R/gibbs_ar.R
 3cfc7e2cd13ac28321e85fc41ffb81ac *R/gibbs_ar_algorithm.R
@@ -21,7 +21,7 @@ f4ed278bcce9652d59a51e9fea2a40f6 *R/gibbs_vnp.R
 703b9eaba70eff2a2261c6f878077468 *R/gibbs_vnp_algorithm.R
 ee5c8d22827642535b3a9ca2b620c3cf *R/misc.R
 a2b1be0525d69a5ce71624a21a353273 *R/nuisance_models.R
-ce45c4c9a9671675370f8f1bf5ce2285 *R/psd_S3.R
+a8a46f9625670aaf12644b4e8500d614 *R/psd_S3.R
 48a9f68746ee7909b41c161d37c160a7 *R/scree_type.R
 820ec489157d97c50228c6b29f838276 *R/unit_trace.R
 9af842ca3ffec09e6053ccc9dda10677 *R/varma.R
@@ -35,7 +35,7 @@ a9c9d190a6412288641d9d8ae6481f06 *man/VAR_regressor_matrix.Rd
 525d2a255f48b1023ccd0817fd0a047a *man/arma_conditional.Rd
 0ec248cf5b1fbce3a4a3569602045a0f *man/bayes_factor.Rd
 f3123506851126b4e7af63317ef6b9ed *man/bayes_factor.bdp_dw_result.Rd
-fecba85eec7a77128a7ff011da030da6 *man/bdp_dw_bayes_factor_k1.Rd
+e4479057e2a9a7863835d953d37a76d1 *man/bdp_dw_bayes_factor_k1.Rd
 501918ce625669737e5f4d1b07eff6ad *man/bdp_dw_est_post_stats.Rd
 80a2d94697c0c48d02c25a2788b1a994 *man/bdp_dw_mcmc.Rd
 10326135aa4789450490792aea1a414d *man/bdp_dw_mcmc_params_gen.Rd
@@ -83,7 +83,7 @@ e50cd3344ab462b138bf96664d650317 *man/llike_AR.Rd
 1e88a087a6e3a77514d109fd995edfbd *man/llike_var.Rd
 660f8910e6fdf48d8c244a78ddecf869 *man/llike_var_full.Rd
 5a2889fb00af9126dddf68ce3ac90e1b *man/llike_var_partial.Rd
-ee07ae9c2c4a4744a2fb4be87201ba22 *man/local_moving_FT_zigzag.Rd
+29bfebefc4570c21ad34c7b14dee1b40 *man/local_moving_FT_zigzag.Rd
 ed37a4154b926e45ab53e2a6b96c0918 *man/logDet_stickBreaking.Rd
 3b27fb32d0a3303cbb3b3ea4a9607f4e *man/logfuller.Rd
 723178ab81a17f61048f83df75245d57 *man/lpost.Rd
@@ -110,7 +110,7 @@ fec0bff1cb6dc813eec8393c1b95b1d4 *man/plotMPsd.Rd
 277cdde102eaf4897bbcbdb0929b9a6e *man/print.bdp_dw_result.Rd
 40c6417116f3b9d8d335c17fb3d0afc0 *man/print.gibbs_psd.Rd
 187d0944af3577d2bffb6ec33cbf1cf7 *man/print_mcmc_state.Rd
-48f9af8d2f4d782868f5eaa9bcd900e7 *man/print_summary_gibbs_psd_help.Rd
+27e17f3a757ea01ad987f7db79a353c0 *man/print_summary_gibbs_psd_help.Rd
 e75fac90867110b36b7b50f9d2edf911 *man/print_warn.Rd
 231c459a2b83cbe5e1589f41096b7a79 *man/psd_arma.Rd
 12beac64aed6c8c5c95c0cb7cc05dc1e *man/psd_array.Rd

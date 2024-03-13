@@ -11,7 +11,7 @@ local_moving_FT_zigzag(x, m, thinning_factor)
 
 \item{m}{A positive integer indicating the size of window.}
 
-\item{thinning_factor}{Selected from {1, 2, 3}.}
+\item{thinning_factor}{Selected from "1, 2, 3".}
 }
 \value{
 A list containing the moving Fourier transform and corresponding time grid.

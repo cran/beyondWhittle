@@ -3,7 +3,7 @@
 #'
 #' @param x A numeric vector containing time series.
 #' @param m A positive integer indicating the size of window.
-#' @param thinning_factor Selected from {1, 2, 3}.
+#' @param thinning_factor Selected from "1, 2, 3".
 #'
 #' @return A list containing the moving Fourier transform and corresponding time grid.
 #' @export

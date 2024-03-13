@@ -2,7 +2,7 @@
 % Please edit documentation in R/dynamicWhittle_prior_and_mcmc_params.R
 \name{bdp_dw_bayes_factor_k1}
 \alias{bdp_dw_bayes_factor_k1}
-\title{Estimating the Bayes factor of hypothesis {k1 = 1}.}
+\title{Estimating the Bayes factor of hypothesis "k1 = 1".}
 \usage{
 bdp_dw_bayes_factor_k1(post_sample, precision = 1000)
 }
@@ -16,7 +16,7 @@ the normalizing constant of the prior probability mass function of k1. Default 1
 The Savage-Dickey estimate of the Bayes factor and its theoretical upper bound. c.f. section 3.3 of Tang et al. (2023).
 }
 \description{
-Estimating the Bayes factor of hypothesis {k1 = 1}.
+Estimating the Bayes factor of hypothesis "k1 = 1".
 }
 \references{
 Tang et al. (2023)
