@@ -14,7 +14,7 @@ bdp_dw_prior_params_gen(
   tau.beta = 0.001,
   k1max = 100,
   k2max = 100,
-  L = 20,
+  L = 10,
   bernstein1_l = 0.1,
   bernstein1_r = 0.9,
   bernstein2_l = 0.1,
@@ -38,7 +38,7 @@ corresponding to rescaled time (for pre-computation of basis functions)}
 \item{k2max}{upper bound of the degrees of Bernstein polynomial
 corresponding to rescaled frequency (for pre-computation of basis functions)}
 
-\item{L}{truncation parameter of DP in stick breaking representation}
+\item{L}{number of terms in fast DP approximation}
 
 \item{bernstein1_l, bernstein1_r}{left and right truncation of Bernstein polynomial basis functions
 for rescaled time, 0<=bernstein1_l<bernstein1_r<=1}

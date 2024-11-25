@@ -25,12 +25,12 @@
 #' @useDynLib beyondWhittle, .registration = TRUE
 #' @keywords internal
 bdp_dw_mcmc <- function(data,
-                    m,
-                    likelihood_thinning = 1,
-                    mcmc_params,
-                    prior_params,
-                    monitor = FALSE,
-                    print_interval = 100)
+                        m,
+                        likelihood_thinning = 1,
+                        mcmc_params,
+                        prior_params,
+                        monitor = FALSE,
+                        print_interval = 100)
 {
 
   # MCMC parameters
@@ -105,49 +105,58 @@ bdp_dw_mcmc <- function(data,
   db.list_2 <- dbList_dw_Bern_for_lambda(u2, k2max, bernstein2_l, bernstein2_r, m, time_grid)
 
 
-  # block length
-  blk_len_V <- L
-  blk_len_W1 <- L+1
-  blk_len_W2 <- L+1
-
-
   # Open objects for storage
   tau <- rep(NA, Ntotal)
-  tilde.V <- matrix(NA, nrow = L, ncol = Ntotal) # reside in [0,1]
-  tilde.W1 <- matrix(NA, nrow = L + 1, ncol = Ntotal)
-  tilde.W2 <- matrix(NA, nrow = L + 1, ncol = Ntotal)
+  tilde.E <- matrix(NA, nrow = L + 1, ncol = Ntotal) # tilde.E = log(E)
+  W1 <- matrix(NA, nrow = L, ncol = Ntotal)
+  W2 <- matrix(NA, nrow = L, ncol = Ntotal)
   k1 <- rep(NA, Ntotal)
   k2 <- rep(NA, Ntotal)
   lpost_storage <- rep(NA, Ntotal)
-
+  
   # Starting values
   tau[1] <- tau.hat <- mean(FZ)
   k1[1] <- round(k1max / 2)
   k2[1] <- round(k2max / 2)
   beta_basis_1_k <- db.list_1[[k1[1]]]
   beta_basis_2_k <- db.list_2[[k2[1]]]
-
-  tilde.V[, 1] <-  qlogis(rep(1/L, L)) # logistic transformation s.t. the domain becomes the whole space
-  tilde.W1[, 1] <- qlogis(seq(from=1/(2*k1[1]), to=1-1/(2*k1[1]), length.out=L+1))
-  tilde.W2[, 1] <- qlogis(seq(from=1/(2*k2[1]), to=1-1/(2*k2[1]), length.out=L+1))
-
-
-  lp.current <- lprior_dw(tilde.V[,1], tilde.W1[, 1], tilde.W2[, 1], k1[1], k2[1], tau[1],
-                              M, g0.alpha, g0.beta, k1.theta, k2.theta, tau.alpha, tau.beta)
-
-  norm_psd.current <- qpsd_dw.tilde_zigzag_cpp_expedited(tilde.V[,1], tilde.W1[, 1], tilde.W2[, 1], k1[1], k2[1], beta_basis_1_k, beta_basis_2_k)
-
-  ll.current <- llike_dw(FZ, norm_psd.current, tau[1])
+  
+  tilde.E[, 1] <-  log(rep(1/(L+1), L+1)) # log transformation s.t. the domain becomes the whole space
+  W1[, 1] <- seq(from=1/(2*k1[1]), to=1-1/(2*k1[1]), length.out=L)
+  W2[, 1] <- seq(from=1/(2*k2[1]), to=1-1/(2*k2[1]), length.out=L)
+  
+  p.current <- qgamma(1 - cumsum(exp(tilde.E[-(L+1), 1]))/sum(exp(tilde.E[, 1])), shape = M/L, rate = 1)
+  
+  selector1.current <- findInterval(W1[, 1], (1:(k1[1]))/(k1[1]), left.open = T) + 1 # amount to ceiling(k1 * w1) but safer
+  #  mat1.current <- beta_basis_1_k[selector1.current, ]
+  
+  selector2.current <- findInterval(W2[, 1], (1:(k2[1]))/(k2[1]), left.open = T) + 1 # amount to ceiling(k2 * w2) but safer
+  #  mat2.current <- beta_basis_2_k[selector2.current, ]
+  
+  lp.current <- lprior_dw(tilde.E[,1], W1[, 1], W2[, 1], k1[1], k2[1], tau[1],
+                          g0.alpha, g0.beta, k1.theta, k2.theta, tau.alpha, tau.beta)
+  
+  npsd.current <- qpsd_cal_cpp_expedited(beta_basis_1_k, 
+                                                         beta_basis_2_k,
+                                                         p.current,
+                                                         integer(ncol(beta_basis_1_k)),
+                                                         selector1.current - 1,
+                                                         selector2.current - 1)/sum(p.current)
+  
+  ll.current <- llike_dw(FZ, npsd.current, tau[1])
   
   lpost_storage[1] <- lp.current + ll.current
-
-  # First one only used for W0.
-
+  
+  
   # proposal variances
-  eps_tau <- 0.1
-
-  dwd_tau <- log(eps_tau) / 2
-
+  # initial Metropolis proposal parameters for W1, W2
+  eps_W1 <- eps_W2 <- seq(1, L) / (seq(1, L) + 2 * sqrt(n)) 
+  eps_E <- seq(1, L+1) / (seq(1, L+1) + 2 * sqrt(n)) 
+  eps_tau <- 5
+  
+  lsd_E <- log(eps_E) / 2
+  lsd_W1 <- log(eps_W1) / 2
+  lsd_W2 <- log(eps_W2) / 2
 
   ####
 
@@ -155,286 +164,313 @@ bdp_dw_mcmc <- function(data,
   tim.start <- Sys.time()
   tim0 <- proc.time()
   for (i in 1:(Ntotal-1)) {
-
+    
     if (monitor){
-
+      
       if ((i+1)%%print_interval == 0) {
-      tim <- proc.time()
-      print_mcmc_state(i+1, Ntotal, tim, tim0)
+        tim <- proc.time()
+        print_mcmc_state(i+1, Ntotal, tim, tim0)
       }
-
+      
     }
-
+    
     # adaptation
-
-        if ((i > 1) && (i <= burnin) && (i %% adaption.batchSize == 1)) {
-          batch <- (i - 1):(i - adaption.batchSize)
-          adaption.delta <- min(0.05, 1/sqrt(i)) # cf. Section 3 of Roberts and Rosenthal (2009)
-
-          ### tau
-          batch.tau <- tau[batch]
-          batch.tau.acceptanceRate <- acceptanceRate(batch.tau)
-          dwd_tau <- dwd_tau + ((batch.tau.acceptanceRate > adaption.targetAcceptanceRate)*2-1) * adaption.delta
-          eps_tau <- exp(2*dwd_tau)
-        }
-
-
+    
+    if ((i > 1) && (i <= burnin) && (i %% adaption.batchSize == 1)) {
+      batch <- (i - 1):(i - adaption.batchSize)
+      adaption.delta <- min(0.05, 1/sqrt(i)) # c.f. Rosenthal
+      ### tilde.E
+      batch.E <- tilde.E[, batch]
+      batch.E.acceptanceRate <- apply(batch.E, 1, acceptanceRate)
+      lsd_E <- lsd_E + ((batch.E.acceptanceRate > adaption.targetAcceptanceRate)*2-1) * adaption.delta
+      eps_E <- exp(2*lsd_E)
+      ### W1
+      batch.W1 <- W1[, batch]
+      batch.W1.acceptanceRate <- apply(batch.W1, 1, acceptanceRate)
+      lsd_W1 <- lsd_W1 + ((batch.W1.acceptanceRate > adaption.targetAcceptanceRate)*2-1) * adaption.delta
+      eps_W1 <- exp(2*lsd_W1)
+      ### W2 
+      batch.W2 <- W2[, batch]
+      batch.W2.acceptanceRate <- apply(batch.W2, 1, acceptanceRate)
+      lsd_W2 <- lsd_W2 + ((batch.W2.acceptanceRate > adaption.targetAcceptanceRate)*2-1) * adaption.delta
+      eps_W2 <- exp(2*lsd_W2)
+    }
+    
+    
+    
     # STEP 1.1: Sample Bernstein polynomial degree k1
-
+    
     k1.star <- k1[i] + (rpois(1, lambda = 1) + 1) * (2*rbinom(1, 1, 0.5) - 1)
     k1.star <- (k1.star-1)%%as.integer(k1max) + 1 # circular symmetric proposal
-
-
+    
+    
     beta_basis_1_k_star <- db.list_1[[k1.star]]
-
-    lp.k1.star <- lprior_dw(tilde.V[,i], tilde.W1[, i], tilde.W2[, i], k1.star, k2[i], tau[i],
-                            M, g0.alpha, g0.beta, k1.theta, k2.theta, tau.alpha, tau.beta)
-
-    norm_psd.k1.star <- qpsd_dw.tilde_zigzag_cpp_expedited(tilde.V[,i], tilde.W1[, i], tilde.W2[, i], k1.star, k2[i], beta_basis_1_k_star, beta_basis_2_k)
-
-    ll.k1.star <- llike_dw(FZ, norm_psd.k1.star, tau[i])
-
+    
+    selector1.star <- findInterval(W1[, i], (1:k1.star)/k1.star, left.open = T) + 1
+    
+    lp.k1.star <- lprior_dw(tilde.E[,i], W1[, i], W2[, i], k1.star, k2[i], tau[i],
+                            g0.alpha, g0.beta, k1.theta, k2.theta, tau.alpha, tau.beta)
+    
+    npsd.k1.star <- qpsd_cal_cpp_expedited(beta_basis_1_k_star, 
+                                           beta_basis_2_k,
+                                           p.current,
+                                           integer(ncol(beta_basis_1_k_star)),
+                                           selector1.star - 1,
+                                           selector2.current - 1)/sum(p.current)
+    
+    
+    ll.k1.star <- llike_dw(FZ, npsd.k1.star, tau[i])
+    
     #####
     # Accept/reject
-
+    
     alpha_k1 <- min(0, (lp.k1.star + ll.k1.star) - (lp.current + ll.current))
     if (isTRUE(log(runif(1, 0, 1)) < alpha_k1)) {
       k1[i + 1] <- k1.star  # Accept k1.star
       lp.current <- lp.k1.star
-      norm_psd.current <- norm_psd.k1.star
+      npsd.current <- npsd.k1.star
       ll.current <- ll.k1.star
-
+      
       beta_basis_1_k <- beta_basis_1_k_star
-      lpost_storage[i + 1] <- lp.current + ll.current
+      selector1.current <- selector1.star
+      
     } else {
       k1[i + 1] <- k1[i]  # Reject and use previous
-      lpost_storage[i + 1] <- lpost_storage[i]
+      
     }
-
-
+    
+    
     # STEP 1.2: Sample Bernstein polynomial degree k2
-
+    
     k2.star <- k2[i] + (rpois(1, lambda = 1) + 1) * (2*rbinom(1, 1, 0.5) - 1)
     k2.star <- (k2.star-1)%%as.integer(k2max) + 1 # circular symmetric proposal
-
-
+    
+    
     beta_basis_2_k_star <- db.list_2[[k2.star]]
-
-
-    lp.k2.star <- lprior_dw(tilde.V[,i], tilde.W1[, i], tilde.W2[, i], k1[i+1], k2.star, tau[i],
-                            M, g0.alpha, g0.beta, k1.theta, k2.theta, tau.alpha, tau.beta)
-
-    norm_psd.k2.star <- qpsd_dw.tilde_zigzag_cpp_expedited(tilde.V[,i], tilde.W1[, i], tilde.W2[, i], k1[i+1], k2.star, beta_basis_1_k, beta_basis_2_k_star)
-
-    ll.k2.star <- llike_dw(FZ, norm_psd.k2.star, tau[i])
-
+    
+    selector2.star <- findInterval(W2[, i], (1:k2.star)/k2.star, left.open = T) + 1
+    
+    lp.k2.star <- lprior_dw(tilde.E[,i], W1[, i], W2[, i], k1[i+1], k2.star, tau[i],
+                            g0.alpha, g0.beta, k1.theta, k2.theta, tau.alpha, tau.beta)
+    
+    npsd.k2.star <- qpsd_cal_cpp_expedited(beta_basis_1_k, 
+                                           beta_basis_2_k_star,
+                                           p.current,
+                                           integer(ncol(beta_basis_1_k)),
+                                           selector1.current - 1,
+                                           selector2.star - 1)/sum(p.current)
+    
+    ll.k2.star <- llike_dw(FZ, npsd.k2.star, tau[i])
+    
     #####
     # Accept/reject
-
+    
     alpha_k2 <- min(0, (lp.k2.star + ll.k2.star) - (lp.current + ll.current))
     if (isTRUE(log(runif(1, 0, 1)) < alpha_k2)) {
       k2[i + 1] <- k2.star  # Accept k.star
       lp.current <- lp.k2.star
-      norm_psd.current <- norm_psd.k2.star
+      npsd.current <- npsd.k2.star
       ll.current <- ll.k2.star
       
       beta_basis_2_k <- beta_basis_2_k_star
-      lpost_storage[i + 1] <- lp.current + ll.current
+      selector2.current <- selector2.star
+      
     } else {
       k2[i + 1] <- k2[i]  # Reject and use previous
-      lpost_storage[i + 1] <- lpost_storage[i]
     }
-
-
-    # block sampling V  (cf. Section 2 of Roberts and Rosenthal (2009))
-    vec.curr_V <- tilde.V[, i]
-
-    if (i <= 2 * blk_len_V){
-      tilde.V.star <- vec.curr_V + 0.1/sqrt(blk_len_V) * rnorm(blk_len_V)
-    } else{
-      if (i == 2 * blk_len_V + 1){
-        # a matrix of dimension blk_len_V by blk_len_V
-        cov.curr_V <- cov(t(tilde.V[, (1:i)]))
-
-        # a vector of length blk_len_V
-        mean.curr_V <- colMeans(t(tilde.V[, (1:i)]))
-      } else{
-        mean.curr_V <- (1 - 1/i) * mean.curr_V + vec.curr_V/i
-        cov.curr_V <- (1 - 1/i) * (cov.curr_V + tcrossprod(vec.curr_V - mean.curr_V, vec.curr_V - mean.curr_V)/i)
-      }
-
-      if (rbinom(1, size = 1, prob = 0.95)){
-        eS <- eigen(cov.curr_V, symmetric = TRUE)
-        tilde.V.star <- vec.curr_V + 2.38/sqrt(blk_len_V) * drop(eS$vectors %*% diag(sqrt(pmax(eS$values, 0))) %*% rnorm(blk_len_V))
-
-      } else{
-        tilde.V.star <- vec.curr_V + 0.1/sqrt(blk_len_V) * rnorm(blk_len_V)
-      }
-    }
-
-
-    lp.V.star <- lprior_dw(tilde.V.star, tilde.W1[,i], tilde.W2[,i], k1[i+1], k2[i+1], tau[i],
-                                 M, g0.alpha, g0.beta, k1.theta, k2.theta, tau.alpha, tau.beta)
-
-    norm_psd.V.star <- qpsd_dw.tilde_zigzag_cpp_expedited(tilde.V.star, tilde.W1[,i], tilde.W2[,i], k1[i+1], k2[i+1], beta_basis_1_k, beta_basis_2_k)
-
-    ll.V.star <- llike_dw(FZ, norm_psd.V.star, tau[i])
-
-    #####
-    # Accept/reject
-
-    alpha_V <- min(0, (ll.V.star - ll.current) + (lp.V.star - lp.current))
-    if (isTRUE(log(runif(1, 0, 1)) < alpha_V)) {# accept the proposed value
-      tilde.V[, i+1] <- tilde.V.star
-
-      lp.current <- lp.V.star
-      norm_psd.current <- norm_psd.V.star
-      ll.current <- ll.V.star
+    
+    
+    # can be implemented using cpp armadillo
+    mat12 <- beta_basis_1_k[selector1.current, ] * beta_basis_2_k[selector2.current, ]
+    
+    
+    
+    # sampling tilde.E
+    
+    tilde.E.star <- tilde.E[, i]
+    
+    for(l in 1:(L+1)){
       
-      lpost_storage[i + 1] <- lp.current + ll.current
-
-    } else {# Reject and use previous
-      tilde.V[, i+1] <- tilde.V[, i]
-      
-      lpost_storage[i + 1] <- lpost_storage[i]
-    }
-
-
-    # block sampling W1  (cf. Section 2 of Roberts and Rosenthal (2009))
-    vec.curr_W1 <- tilde.W1[, i]
-
-    if (i <= 2 * blk_len_W1){
-      tilde.W1.star <- vec.curr_W1 + 0.1/sqrt(blk_len_W1) * rnorm(blk_len_W1)
-    } else{
-      if (i == 2 * blk_len_W1 + 1){
-        # a matrix of dimension blk_len_W1 by blk_len_W1
-        cov.curr_W1 <- cov(t(tilde.W1[, (1:i)]))
-
-        # a vector of length blk_len_W1
-        mean.curr_W1 <- colMeans(t(tilde.W1[, (1:i)]))
-      } else{
-        mean.curr_W1 <- (1 - 1/i) * mean.curr_W1 + vec.curr_W1/i
-        cov.curr_W1 <- (1 - 1/i) * (cov.curr_W1 + tcrossprod(vec.curr_W1 - mean.curr_W1, vec.curr_W1 - mean.curr_W1)/i)
+      if (l > 1) {
+        
+        tilde.E.star[l-1] <- tilde.E[l-1, i + 1]
+        tilde.E.star[l-1] <- tilde.E[l-1, i + 1]
+        
       }
-
-      if (rbinom(1, size = 1, prob = 0.95)){
-        eS <- eigen(cov.curr_W1, symmetric = TRUE)
-        tilde.W1.star <- vec.curr_W1 + 2.38/sqrt(blk_len_W1) * drop(eS$vectors %*% diag(sqrt(pmax(eS$values, 0))) %*% rnorm(blk_len_W1))
-
-      } else{
-        tilde.W1.star <- vec.curr_W1 + 0.1/sqrt(blk_len_W1) * rnorm(blk_len_W1)
+      
+      tilde.E.star[l] <- tilde.E.star[l] + eps_E[l] * rnorm(1)
+      
+      lp.E.star <- lprior_dw(tilde.E.star, W1[,i], W2[,i], k1[i+1], k2[i+1], tau[i],
+                             g0.alpha, g0.beta, k1.theta, k2.theta, tau.alpha, tau.beta)
+      
+      p.star <- qgamma(1 - cumsum(exp(tilde.E.star[-(L+1)]))/sum(exp(tilde.E.star)), shape = M/L, rate = 1)
+      
+      
+      npsd.E.star <- colSums(p.star * mat12)/sum(p.star)
+      
+      ll.E.star <- llike_dw(FZ, npsd.E.star, tau[i])
+      
+      #####
+      # Accept/reject
+      
+      alpha_E <- min(0, (ll.E.star - ll.current) + (lp.E.star - lp.current))
+      if (isTRUE(log(runif(1, 0, 1)) < alpha_E)) {# accept the proposed value
+        tilde.E[l, i+1] <- tilde.E.star[l]
+        
+        lp.current <- lp.E.star
+        p.current <- p.star
+        ll.current <- ll.E.star
+        
+        npsd.current <- npsd.E.star
+        
+      } else {# Reject and use previous
+        tilde.E[l, i+1] <- tilde.E[l, i]
       }
-    }
-
-
-    lp.W1.star <- lprior_dw(tilde.V[,i+1], tilde.W1.star, tilde.W2[,i], k1[i+1], k2[i+1], tau[i],
-                                  M, g0.alpha, g0.beta, k1.theta, k2.theta, tau.alpha, tau.beta)
-
-    norm_psd.W1.star <- qpsd_dw.tilde_zigzag_cpp_expedited(tilde.V[,i+1], tilde.W1.star, tilde.W2[,i], k1[i+1], k2[i+1], beta_basis_1_k, beta_basis_2_k)
-
-    ll.W1.star <- llike_dw(FZ, norm_psd.W1.star, tau[i])
-
-    #####
-    # Accept/reject
-
-    alpha_W1 <- min(0, (ll.W1.star - ll.current) + (lp.W1.star - lp.current))
-    if (isTRUE(log(runif(1, 0, 1)) < alpha_W1)) {# accept the proposed value
-      tilde.W1[, i+1] <- tilde.W1.star
-
-      lp.current <- lp.W1.star
-      norm_psd.current <- norm_psd.W1.star
-      ll.current <- ll.W1.star
       
-      lpost_storage[i + 1] <- lp.current + ll.current
-
-    } else {# Reject and use previous
-      tilde.W1[, i+1] <- tilde.W1[, i]
       
-      lpost_storage[i + 1] <- lpost_storage[i]
     }
-
-
-    # block sampling W2  (cf. Section 2 of Roberts and Rosenthal (2009))
-    vec.curr_W2 <- tilde.W2[, i]
-
-    if (i <= 2 * blk_len_W2){
-      tilde.W2.star <- vec.curr_W2 + 0.1/sqrt(blk_len_W2) * rnorm(blk_len_W2)
-    } else{
-      if (i == 2 * blk_len_W1 + 1){
-        # a matrix of dimension blk_len_W2 by blk_len_W2
-        cov.curr_W2 <- cov(t(tilde.W2[, (1:i)]))
-
-        # a vector of length blk_len_W2
-        mean.curr_W2 <- colMeans(t(tilde.W2[, (1:i)]))
-      } else{
-        mean.curr_W2 <- (1 - 1/i) * mean.curr_W2 + vec.curr_W2/i
-        cov.curr_W2 <- (1 - 1/i) * (cov.curr_W2 + tcrossprod(vec.curr_W2 - mean.curr_W2, vec.curr_W2 - mean.curr_W2)/i)
+    
+    unip.current <- p.current/sum(p.current)
+    unipmat12 <- unip.current * mat12
+    #    npsd.current <- colSums(unipmat12)
+    unipmat12.star <- unipmat12
+    
+    # updating W1 and W2
+    W1.star <- W1[, i]
+    W2.star <- W2[, i]
+    
+    for (l in 1:L) {
+      
+      if (l > 1) {
+        
+        W1.star[l-1] <- W1[l-1, i + 1]
+        W2.star[l-1] <- W2[l-1, i + 1]
+        
       }
-
-      if (rbinom(1, size = 1, prob = 0.95)){
-        eS <- eigen(cov.curr_W2, symmetric = TRUE)
-        tilde.W2.star <- vec.curr_W2 + 2.38/sqrt(blk_len_W2) * drop(eS$vectors %*% diag(sqrt(pmax(eS$values, 0))) %*% rnorm(blk_len_W2))
-
-      } else{
-        tilde.W2.star <- vec.curr_W2 + 0.1/sqrt(blk_len_W2) * rnorm(blk_len_W2)
+      
+      ###---first W1, then W2---------------
+      
+      # Uniform proposal (W1[,i] - eps, W1[,i] + eps) on (0,1)
+      W1.star[l] <- W1.star[l] + eps_W1[l] * rnorm(1)
+      W1.star[l] <- W1.star[l] - floor(W1.star[l])
+      
+      # W1.star[l] <- runif(1, W1.star[l] - eps_W1[l], W1.star[l] + eps_W1[l])
+      # W1.star[l] <- W1.star[l] - floor(W1.star[l])
+      
+      selector1l.star <- findInterval(W1.star[l], (1:(k1[i+1]))/(k1[i+1]), left.open = T) + 1
+      
+      mat12lvec.star <- beta_basis_1_k[selector1l.star, ] * beta_basis_2_k[selector2.current[l], ]
+      
+      #      npsd.W.star <- npsd.current - unipmat12[l, ] + unip.current[l] * mat12lvec.star
+      
+      unipmat12.star[l, ] <-  unip.current[l] * mat12lvec.star
+      
+      #      npsd.W.star <- colSums(unipmat12.star)
+      
+      npsd.W.star <- npsd.current - unipmat12[l, ] + unipmat12.star[l, ]
+      
+      lp.W.star <- lprior_dw(tilde.E[,i+1], W1.star, W2.star, k1[i+1], k2[i+1], tau[i],
+                             g0.alpha, g0.beta, k1.theta, k2.theta, tau.alpha, tau.beta)
+      
+      ll.W.star <- llike_dw(FZ, npsd.W.star, tau[i])
+      
+      #####
+      # Accept/reject
+      
+      alpha_W <- min(0, (ll.W.star - ll.current) + (lp.W.star - lp.current))
+      if (isTRUE(log(runif(1, 0, 1)) < alpha_W)) {# accept the proposed value
+        W1[l, i+1] <- W1.star[l]
+        
+        lp.current <- lp.W.star
+        ll.current <- ll.W.star
+        
+        npsd.current <- npsd.W.star
+        unipmat12[l, ] <- unipmat12.star[l, ]
+        selector1.current[l] <- selector1l.star
+        
+      } else {# Reject and use previous
+        W1[l, i+1] <- W1[l, i]
+        unipmat12.star[l, ] <- unipmat12[l, ]
       }
-    }
-
-
-    lp.W2.star <- lprior_dw(tilde.V[,i+1], tilde.W1[,i+1], tilde.W2.star, k1[i+1], k2[i+1], tau[i],
-                                  M, g0.alpha, g0.beta, k1.theta, k2.theta, tau.alpha, tau.beta)
-
-    norm_psd.W2.star <- qpsd_dw.tilde_zigzag_cpp_expedited(tilde.V[,i+1], tilde.W1[,i+1], tilde.W2.star, k1[i+1], k2[i+1], beta_basis_1_k, beta_basis_2_k)
-
-    ll.W2.star <- llike_dw(FZ, norm_psd.W2.star, tau[i])
-
-    #####
-    # Accept/reject
-
-    alpha_W2 <- min(0, (ll.W2.star - ll.current) + (lp.W2.star - lp.current))
-    if (isTRUE(log(runif(1, 0, 1)) < alpha_W2)) {# accept the proposed value
-      tilde.W2[, i+1] <- tilde.W2.star
-
-      lp.current <- lp.W2.star
-      norm_psd.current <- norm_psd.W2.star
-      ll.current <- ll.W2.star
       
-      lpost_storage[i + 1] <- lp.current + ll.current
-
-    } else {# Reject and use previous
-      tilde.W2[, i+1] <- tilde.W2[, i]
       
-      lpost_storage[i + 1] <- lpost_storage[i]
+      ##--------------------------
+      
+      # Uniform proposal (W1[,i] - eps, W1[,i] + eps) on (0,1)
+      W2.star[l] <- W2.star[l] + eps_W2[l] * rnorm(1)
+      W2.star[l] <- W2.star[l] - floor(W2.star[l])
+      
+      # W2.star[l] <- runif(1, W2.star[l] - eps_W2[l], W2.star[l] + eps_W2[l])
+      # W2.star[l] <- W2.star[l] - floor(W2.star[l])
+      
+      selector2l.star <- findInterval(W2.star[l], (1:(k2[i+1]))/(k2[i+1]), left.open = T) + 1
+      
+      mat12lvec.star <- beta_basis_1_k[selector1.current[l], ] * beta_basis_2_k[selector2l.star, ]
+      
+      #      npsd.W.star <- npsd.current - unipmat12[l, ] + unip.current[l] * mat12lvec.star
+      
+      unipmat12.star[l, ] <-  unip.current[l] * mat12lvec.star
+      
+      #      npsd.W.star <- colSums(unipmat12.star)
+      
+      npsd.W.star <- npsd.current - unipmat12[l, ] + unipmat12.star[l, ]
+      
+      lp.W.star <- lprior_dw(tilde.E[,i+1], W1.star, W2.star, k1[i+1], k2[i+1], tau[i],
+                             g0.alpha, g0.beta, k1.theta, k2.theta, tau.alpha, tau.beta)
+      
+      ll.W.star <- llike_dw(FZ, npsd.W.star, tau[i])
+      
+      #####
+      # Accept/reject
+      
+      alpha_W <- min(0, (ll.W.star - ll.current) + (lp.W.star - lp.current))
+      if (isTRUE(log(runif(1, 0, 1)) < alpha_W)) {# accept the proposed value
+        W2[l, i+1] <- W2.star[l]
+        
+        lp.current <- lp.W.star
+        ll.current <- ll.W.star
+        
+        npsd.current <- npsd.W.star
+        unipmat12[l, ] <- unipmat12.star[l, ]
+        selector2.current[l] <- selector2l.star
+        
+      } else {# Reject and use previous
+        W2[l, i+1] <- W2[l, i]
+        unipmat12.star[l, ] <- unipmat12[l, ]
+      }
+      
+      
+      
     }
-
+    
     # sampling tau
-
-    tau.star <- exp(log(tau.hat) + rnorm(1, mean = 0, sd = eps_tau))
-
-    lp.tau.star <- lprior_dw(tilde.V[, i+1], tilde.W1[, i+1], tilde.W2[, i+1], k1[i+1], k2[i+1], tau.star,
-                             M, g0.alpha, g0.beta, k1.theta, k2.theta, tau.alpha, tau.beta)
-
-    ll.tau.star <- llike_dw(FZ, norm_psd.current, tau.star)
-
+    
+    tau.star <- tau.hat * runif(1, min = 0, max = eps_tau)
+    
+    lp.tau.star <- lprior_dw(tilde.E[, i+1], W1[, i+1], W2[, i+1], k1[i+1], k2[i+1], tau.star,
+                             g0.alpha, g0.beta, k1.theta, k2.theta, tau.alpha, tau.beta)
+    
+    ll.tau.star <- llike_dw(FZ, npsd.current, tau.star)
+    
     #####
     # Accept/reject
-
+    
     alpha_tau <- min(0, (ll.tau.star  - ll.current) + (lp.tau.star  - lp.current))
     if (isTRUE(log(runif(1, 0, 1)) < alpha_tau)) {# Accept tau.star
-      tau[i + 1] <- tau.star
-
+      tau[i + 1] <- tau.star  
+      
       lp.current <- lp.tau.star
       ll.current <- ll.tau.star
       
-      lpost_storage[i + 1] <- lp.current + ll.current
+      lpost_storage[i+1] <- lp.current + ll.current # tracing log posterior
+      
     } else {# Reject and use previous
       tau[i + 1] <- tau[i]
-      
-      lpost_storage[i + 1] <- lpost_storage[i]
-    }
-
+      lpost_storage[i+1] <- lpost_storage[i] # tracing log posterior
+    } 
+    
   }  # END: MCMC loop
-
+  
   tim.end <- Sys.time()
 
   # Which iterations to keep
@@ -442,12 +478,12 @@ bdp_dw_mcmc <- function(data,
   k1 <- k1[keep]
   k2 <- k2[keep]
   tau <- tau[keep]
-  V <- plogis(tilde.V[, keep])
-  W1 <- plogis(tilde.W1[, keep])
-  W2 <- plogis(tilde.W2[, keep])
+  E <- exp(tilde.E[, keep])
+  W1 <- W1[, keep]
+  W2 <- W2[, keep]
   lpost_storage <- lpost_storage[keep]
 
-  return(list(k1 = k1, k2 = k2, tau = tau, V = V, W1 = W1, W2 = W2,
+  return(list(k1 = k1, k2 = k2, tau = tau, E = E, W1 = W1, W2 = W2, 
               tim = tim.end - tim.start, prior_params = prior_params, lpost = lpost_storage, data = data)
          )
 }

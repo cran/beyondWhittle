@@ -4,7 +4,7 @@
 \alias{llike_dw}
 \title{Calculating log likelihood}
 \usage{
-llike_dw(FZ, norm_psd, tau)
+llike_dw(FZ, npsd, tau)
 }
 \description{
 Calculating log likelihood

@@ -5,7 +5,7 @@ test_that("gibbs_bdp_dw runs on sample white noise data", {
   mcmc <- gibbs_bdp_dw(data=test_data, 
                        m=5, 
                        likelihood_thinning=1, 
-                       res_time=(1:2)/3, 
+                       rescaled_time=(1:2)/3, 
                        freq=(1:2)/3 * pi,
                        Ntotal=2000, 
                        burnin=100, 

@@ -5,13 +5,12 @@
 \title{Calculation of log prior}
 \usage{
 lprior_dw(
-  tilde.v,
-  tilde.w1,
-  tilde.w2,
+  tilde.E,
+  w1,
+  w2,
   k1,
   k2,
   tau,
-  M,
   g0.alpha,
   g0.beta,
   k1.theta,

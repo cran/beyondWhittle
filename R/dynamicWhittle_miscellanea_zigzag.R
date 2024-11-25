@@ -47,22 +47,26 @@ local_moving_FT_zigzag <- function(x, m, thinning_factor){
 #' @importFrom stats dbeta
 #' @importFrom stats plogis
 #' @importFrom stats dlogis
+#' @importFrom stats dexp
 #' @keywords internal
-lprior_dw <- function(tilde.v, tilde.w1, tilde.w2, k1, k2, tau,
-                      M, g0.alpha, g0.beta, k1.theta, k2.theta, tau.alpha, tau.beta){
-
-  lp_tilde.v <- sum(dbeta(plogis(tilde.v), 1, M, log = T) + dlogis(tilde.v, log = T) ) # log prior for V's - beta(1, M)
-  lp_tilde.w1 <- sum(dbeta(plogis(tilde.w1), g0.alpha, g0.beta, log = T) + dlogis(tilde.w1, log = T) )# log prior for W1's - beta(a, b)
-  lp_tilde.w2 <- sum(dbeta(plogis(tilde.w2), g0.alpha, g0.beta, log = T) + dlogis(tilde.w2, log = T) )# log prior for W1's - beta(a, b)
+lprior_dw <- function(tilde.E, w1, w2, k1, k2, tau,
+                      g0.alpha, g0.beta, k1.theta, k2.theta, tau.alpha, tau.beta){
+  
+  # log prior for tilde.E = log(E) <= log prior for E's - Exp(1)
+  lp_tilde.E <- sum(dexp(exp(tilde.E), 1, log = T)) + sum(tilde.E)
+  # log prior for W1's - beta(a, b)
+  lp_tilde.w1 <- sum(dbeta(w1, g0.alpha, g0.beta, log = T))
+  # log prior for W2's - beta(a, b)
+  lp_tilde.w2 <- sum(dbeta(w2, g0.alpha, g0.beta, log = T))
   lp_k1 <- -k1.theta * k1 * log(k1) # log prior for k1
-  lp_k2 <- -k2.theta * k2 * log(k2) # log prior for k2
-  lp_tau <- -(tau.alpha + 1) * log(tau) - tau.beta / tau # log prior for tau (Inverse Gamma)
-
-
-  lp <- lp_tilde.v + lp_tilde.w1 + lp_tilde.w2 + lp_k1 + lp_k2 + lp_tau
-
+  lp_k2 <- -k2.theta * k2 * log(k2) # log prior for k1
+  # log prior for tau (Inverse Gamma)
+  lp_tau <- -(tau.alpha + 1) * log(tau) - tau.beta / tau 
+  
+  lp <- lp_tilde.E + lp_tilde.w1 + lp_tilde.w2 + lp_k1 + lp_k2 + lp_tau
+  
   return(lp)
-
+  
 }
 
 #' Evaluation of normalized time-varying spectral density function (based on posterior samples)
@@ -104,14 +108,14 @@ qpsd_dw.tilde_zigzag_cpp_expedited <- function(tilde.v, tilde.w1, tilde.w2, k1, 
 
 #' Calculating log likelihood
 #' @keywords internal
-llike_dw <- function(FZ, norm_psd, tau) {
-
-  # Bivariate time-varying spectral density (defined on [0, 1]^2)
-  f <- tau * norm_psd
-
+llike_dw <- function(FZ, npsd, tau) {
+  
+  # psd is a bivariate time-varying spectral density (defined on [0, 1]^2)
+  psd <- tau * npsd
+  
   # Whittle log-likelihood
-  ll <- -sum(log(f + 1e-100) + (FZ + 1e-100) / (f + 1e-100) ) # the added 1e-100 is for numeric stability
-
+  ll <- - sum(log(psd + 1e-100) + (FZ + 1e-100) / (psd + 1e-100)) 
+  
   return(ll)
 }
 

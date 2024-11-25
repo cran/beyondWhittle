@@ -11,7 +11,7 @@ gibbs_bdp_dw(
   monitor = TRUE,
   print_interval = 100,
   unif_CR = FALSE,
-  res_time,
+  rescaled_time,
   freq,
   Ntotal = 110000,
   burnin = 60000,
@@ -27,7 +27,7 @@ gibbs_bdp_dw(
   tau.beta = 0.001,
   k1max = 100,
   k2max = 100,
-  L = 20,
+  L = 10,
   bernstein1_l = 0.1,
   bernstein1_r = 0.9,
   bernstein2_l = 0.1,
@@ -48,7 +48,7 @@ If monitor = FALSE, it does not have any effect}
 
 \item{unif_CR}{a Boolean value (default FALSE) indicating whether to calculate the uniform credible region}
 
-\item{res_time, freq}{a set of grid lines in \eqn{[0,1]} and \eqn{[0,\pi]}, respectively, specifying where to evaluate the estimated tv-PSD}
+\item{rescaled_time, freq}{a set of grid lines in \eqn{[0,1]} and \eqn{[0,\pi]}, respectively, specifying where to evaluate the estimated tv-PSD}
 
 \item{Ntotal}{total number of iterations to run the Markov chain}
 
@@ -102,19 +102,20 @@ BDP-DW method: performing posterior sampling and calculating statistics based on
 \dontrun{
 
 ##
-## Example: Applying BDP-DW method to a multi-peaked tvMA(1) process
+## Example: Applying BDP-DW method to a multi-peaked heavy-tailed tvMA(1) process
 ##
 
 # set seed
-set.seed(200)
+set.seed(2)
 # set the length of time series
 len_d <- 1500
-# generate data from DGP LS2c defined in Section 4.2.2 of Tang et al. (2023). 
+# generate data from DGP LS2b defined in Section 4.2.2 of Tang et al. (2023). 
 # see also ?sim_tvarma12
-sim_data <- sim_tvarma12(len_d = 1500, dgp = "LS2", innov_distribution = "c")
+sim_data <- sim_tvarma12(len_d = 1500, dgp = "LS2", innov_distribution = "b")
+set.seed(NULL)
 # specify grid-points at which the tv-PSD is evaluated
 res_time <- seq(0, 1, by = 0.005); freq <- pi * seq(0, 1, by = 0.01)
-# calculate the true tv-PSD of DGP LS2c at the pre-specified grid
+# calculate the true tv-PSD of DGP LS2b at the pre-specified grid
 true_tvPSD <- psd_tvarma12(rescaled_time = res_time, freq = freq, dgp = "LS2")
 # plot the true tv-PSD
 # type ?plot.bdp_dw_tv_psd for more info
